@@ -7,7 +7,7 @@
 
 body {
   @apply m-0;
-  font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  font-family: Tahoma, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
