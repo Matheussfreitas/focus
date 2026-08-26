@@ -7,7 +7,7 @@
 
 body {
   @apply m-0;
-  font-family: Tahoma, sans-serif;
+  font-family: 'Sora', initial;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

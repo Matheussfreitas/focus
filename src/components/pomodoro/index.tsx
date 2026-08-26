@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { Button } from "../ui/button";
+import { useEffect, useRef, useState } from 'react'
+import { Button } from '../ui/button'
 
 const DURACAO_PADRAO = 25 * 60 * 1000 // 25 minutos em ms
 const PAUSA_PADRAO = 5 * 60 * 1000 // 5 minutos em ms
@@ -12,7 +12,7 @@ export function Pomodoro() {
   const alvoRef = useRef<number>(0) // timestamp de quando deve terminar
 
   const minutos = Math.floor(restante / 1000 / 60)
-  const segundos = Math.floor(restante / 1000 % 60)
+  const segundos = Math.floor((restante / 1000) % 60)
 
   function tick() {
     try {
@@ -59,25 +59,45 @@ export function Pomodoro() {
   }, [])
 
   return (
-    <div className="border flex justify-center items-center flex-col gap-4">
-      <div className="h-100 w-100 border-[0.5px] border-blue-200 rounded-full flex justify-center items-center">
-        <p className="text-5xl">{minutos}:{String(segundos).padStart(2, '0')}</p>
+    <div className="h-full flex justify-center items-center flex-col gap-8 text-[#131A26]">
+      <div className="h-80 w-80 border-[0.5px] border-[rgba(29,57,110,.11)] rounded-full flex justify-center items-center flex-col">
+        <p className="text-6xl">
+          {minutos}:{String(segundos).padStart(2, '0')}
+        </p>
+        {!isRunning ? (
+          <p className="text-sm text-[#93A0B4]">PAUSADO</p>
+        ) : (
+          <p className="text-sm text-[#93A0B4]">EM ANDAMENTO</p>
+        )}
       </div>
 
-      <div>
-        <p>Tarefa Atual</p>
-        <p>Ajustar layout do pomodoro</p>
+      <div className="flex flex-col items-center gap-2 text-[#5A6980]">
+        <p>TAREFA ATUAL</p>
+        <p className="font-bold">Ajustar layout do pomodoro</p>
       </div>
-      
+
       <div className="flex gap-2">
-        <Button onClick={handleStart} type="button" variant="default" className="cursor-pointer" disabled={isRunning}>
-          iniciar
+        <Button
+          onClick={isRunning ? handlePause : handleStart}
+          type="button"
+          variant="default"
+          className="px-12 py-8 rounded-3xl cursor-pointer text-white text-md bg-[#1D396E]"
+        >
+          {isRunning ? 'Pausar' : 'Iniciar'}
         </Button>
-        <Button onClick={handlePause} variant="secondary" className="cursor-pointer" disabled={!isRunning}>
-          pausar
+        <Button
+          onClick={handleReset}
+          variant="ghost"
+          className="px-12 py-8 rounded-3xl cursor-pointer text-[#5A6980] text-md border border-[rgba(29,57,110,.11)]"
+        >
+          Reiniciar
         </Button>
-        <Button onClick={handleReset} variant="outline" className="cursor-pointer">
-          resetar
+        <Button
+          onClick={() => console.log('Pular')}
+          variant="ghost"
+          className="px-12 py-8 rounded-3xl cursor-pointer text-[#5A6980] text-md border border-[rgba(29,57,110,.11)]"
+        >
+          Pular
         </Button>
       </div>
     </div>
