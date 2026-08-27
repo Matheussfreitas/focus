@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Pomodoro } from '../components/pomodoro'
+import { Kanban } from '../components/kanban';
 
 export const Route = createFileRoute('/')({
   component: HomePage,
@@ -7,8 +8,8 @@ export const Route = createFileRoute('/')({
 
 function HomePage() {
   return (
-    <div className="h-full bg-[#F4F6FA]">
-      <Pomodoro />
+    <div className="h-full bg-[#F4F6FA] border border-green-800">
+      <Kanban />
     </div>
   )
 }
