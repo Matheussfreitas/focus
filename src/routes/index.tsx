@@ -8,8 +8,8 @@ export const Route = createFileRoute('/')({
 
 function HomePage() {
   return (
-    <div className="h-full bg-[#F4F6FA] border border-green-800">
-      <Kanban />
+    <div className="h-full">
+      <Pomodoro />
     </div>
   )
 }

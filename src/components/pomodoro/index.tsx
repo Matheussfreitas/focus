@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Button } from '../ui/button'
+import { FiChevronsRight, FiRotateCw } from 'react-icons/fi'
 
 const DURACAO_PADRAO = 25 * 60 * 1000 // 25 minutos em ms
 const PAUSA_PADRAO = 5 * 60 * 1000 // 5 minutos em ms
@@ -59,45 +60,40 @@ export function Pomodoro() {
   }, [])
 
   return (
-    <div className="h-full flex justify-center items-center flex-col gap-8 text-[#131A26]">
-      <div className="h-80 w-80 border-[0.5px] border-[rgba(29,57,110,.11)] rounded-full flex justify-center items-center flex-col">
-        <p className="text-6xl">
+    <div className="h-full flex justify-center items-center flex-col gap-4 bg-[#1D396E]">
+      <div className="h-60 w-60 border-20 border-[rgba(240,235,225,.24)] rounded-full flex justify-center items-center flex-col">
+        <p className="text-5xl">
           {minutos}:{String(segundos).padStart(2, '0')}
         </p>
-        {!isRunning ? (
-          <p className="text-sm text-[#93A0B4]">PAUSADO</p>
-        ) : (
-          <p className="text-sm text-[#93A0B4]">EM ANDAMENTO</p>
-        )}
       </div>
 
-      <div className="flex flex-col items-center gap-2 text-[#5A6980]">
-        <p>TAREFA ATUAL</p>
+      <div className="flex flex-col items-center text-[rgba(240,235,225,.62)]">
+        <p>EM CURSO</p>
         <p className="font-bold">Ajustar layout do pomodoro</p>
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex">
         <Button
           onClick={isRunning ? handlePause : handleStart}
           type="button"
           variant="default"
-          className="px-12 py-8 rounded-3xl cursor-pointer text-white text-md bg-[#1D396E]"
+          className="px-12 py-8 cursor-pointer rounded-none text-[#1D396E] text-md bg-[#F0EBE1]"
         >
           {isRunning ? 'Pausar' : 'Iniciar'}
         </Button>
         <Button
           onClick={handleReset}
           variant="ghost"
-          className="px-12 py-8 rounded-3xl cursor-pointer text-[#5A6980] text-md border border-[rgba(29,57,110,.11)]"
+          className="px-12 py-8 cursor-pointer rounded-none text-[#F0EBE1] text-md border-2 border-[rgba(240,235,225,.24)]"
         >
-          Reiniciar
+          <FiRotateCw />
         </Button>
         <Button
           onClick={() => console.log('Pular')}
           variant="ghost"
-          className="px-12 py-8 rounded-3xl cursor-pointer text-[#5A6980] text-md border border-[rgba(29,57,110,.11)]"
+          className="px-12 py-8 rounded-none cursor-pointer text-[#F0EBE1] text-md border-2 border-[rgba(240,235,225,.24)]"
         >
-          Pular
+          <FiChevronsRight />
         </Button>
       </div>
     </div>

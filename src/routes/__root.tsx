@@ -28,7 +28,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'Fluxo',
+        title: 'Focus',
       },
     ],
     links: [
@@ -43,12 +43,12 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="pt-BR" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <HeadContent />
       </head>
-      <body className="h-dvh flex flex-col font-sans antialiased wrap-anywhere">
+      <body className="h-dvh flex flex-col antialiased wrap-anywhere">
         <Header />
         <main className="flex-1">
           {children}

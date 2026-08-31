@@ -1,20 +1,21 @@
-import { Link } from '@tanstack/react-router'
-import BetterAuthHeader from '../integrations/better-auth/header-user.tsx'
-import ThemeToggle from './ThemeToggle'
+import BetterAuthHeader from '../integrations/better-auth/header-user.tsx';
+import ThemeToggle from './ThemeToggle';
 
 export default function Header() {
+  const day = new Date().getDay()
+  const month = new Date().getMonth()
+  const daysOfWeek = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB']
+  const monthsOfYear = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ']
+
   return (
-    <header className="sticky top-0 z-50 border-b border-[rgba(29,57,110,.11)] bg-[#F4F6FA] px-4 backdrop-blur-lg">
+    <header className="top-0 z-50 bg-[#EDE7DC] px-4">
       <nav className="page-wrap flex flex-wrap items-center gap-x-3 gap-y-2 py-3 sm:py-4">
-        <h2 className="m-0 shrink-0 text-base font-semibold tracking-tight">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 rounded-full border border-[rgba(29,57,110,.11)] bg-[#F4F6FA] px-3 py-1.5 text-sm text-[#1D396E] no-underline shadow-[0_8px_24px_rgba(30,90,72,0.08)] sm:px-4 sm:py-2"
-          >
-            <span className="h-2 w-2 rounded-full bg-[#1D396E]" />
-            Fluxo
-          </Link>
-        </h2>
+        <div className="flex items-center gap-1.5 sm:gap-2 py-3 mr-auto">
+          <div className="border font-extrabold text-[#111A2B]">FOCUS</div>
+          <div className="text-sm font-medium text-[#5D5344]">
+            {daysOfWeek[day]} {day} {monthsOfYear[month]}
+          </div>
+        </div>
 
         <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
           <BetterAuthHeader />

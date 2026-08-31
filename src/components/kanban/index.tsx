@@ -1,47 +1,11 @@
-import { TaskStatus } from '#/generated/prisma/enums.ts'
-import { KanbanCard } from './KanbanCard'
-import type { Task } from './types/task.type'
+import { tasks } from './data';
+import { KanbanCard } from './KanbanCard';
+import type { Task } from './types/task.type';
 
 const columns = [
   { id: 'TODO', title: 'A fazer' },
   { id: 'IN_PROGRESS', title: 'Em Progresso' },
   { id: 'DONE', title: 'Feito' },
-]
-
-const tasks: Task[] = [
-  {
-    id: '1',
-    title: 'Task 1',
-    description: 'Description 1',
-    tag: null,
-    tagId: null,
-    status: TaskStatus.TODO,
-    dueDate: new Date(),
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: '2',
-    title: 'Task 2',
-    description: 'Description 2',
-    tag: null,
-    tagId: null,
-    status: TaskStatus.IN_PROGRESS,
-    dueDate: new Date(),
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: '3',
-    title: 'Task 3',
-    description: 'Description 3',
-    tag: null,
-    tagId: null,
-    status: TaskStatus.DONE,
-    dueDate: new Date(),
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
 ]
 
 export function Kanban() {
