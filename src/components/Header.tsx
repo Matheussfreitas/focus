@@ -9,9 +9,10 @@ export default function Header() {
 
   return (
     <header className="top-0 z-50 bg-[#EDE7DC] px-4">
-      <nav className="page-wrap flex flex-wrap items-center gap-x-3 gap-y-2 py-3 sm:py-4">
-        <div className="flex items-center gap-1.5 sm:gap-2 py-3 mr-auto">
-          <div className="border font-extrabold text-[#111A2B]">FOCUS</div>
+      <nav className="page-wrap flex flex-wrap items-center gap-x-3 h-full">
+        <div className="h-full flex items-center gap-1.5 sm:gap-2 mr-auto">
+          <div className="font-bold text-[#111A2B]">FOCUS</div>
+          <div className="h-full w-0.5 bg-[#111A2B]" />
           <div className="text-sm font-medium text-[#5D5344]">
             {daysOfWeek[day]} {day} {monthsOfYear[month]}
           </div>

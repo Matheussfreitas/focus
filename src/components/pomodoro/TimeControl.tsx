@@ -1,0 +1,33 @@
+import { FiMinus, FiPlus } from 'react-icons/fi'
+import { Button } from '../ui/button'
+
+interface TimeControlProps {
+  title: string
+  duracao: number
+  handleLessDuration: () => void
+  handleMoreDuration: () => void
+}
+
+export function TimeControl({
+  title,
+  duracao,
+  handleLessDuration,
+  handleMoreDuration,
+}: TimeControlProps) {
+  return (
+    <div className="text-sm">
+      <div className="flex items-center text-[rgba(240,235,225,.62)]">
+        <p>{title}</p>
+        <span className="flex items-center gap-2 ml-2">
+          <Button variant="ghost" onClick={handleLessDuration}>
+            <FiMinus />
+          </Button>
+          <p>{duracao}</p>
+          <Button variant="ghost" onClick={handleMoreDuration}>
+            <FiPlus />
+          </Button>
+        </span>
+      </div>
+    </div>
+  )
+}

@@ -7,14 +7,9 @@
 
 body {
   @apply m-0;
-  font-family: 'Bricolage Grotesque', initial;
+  font-family: 'Bricolage Grotesque', serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-code {
-  font-family:
-    source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
 /* Haute Patisserie Dark Theme */
@@ -77,9 +72,6 @@ code {
 }
 
 @theme inline {
-  --font-display: 'Playfair Display', Georgia, serif;
-  --font-body: 'Cormorant Garamond', Georgia, serif;
-
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
