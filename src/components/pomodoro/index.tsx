@@ -77,9 +77,9 @@ export function Pomodoro() {
           onClick={isRunning ? handlePause : handleStart}
           type="button"
           variant="default"
-          className="px-12 py-8 cursor-pointer rounded-none text-[#1D396E] text-md bg-[#F0EBE1]"
+          className="px-12 py-8 cursor-pointer rounded-none text-[#1D396E] text-md border-2 border-[#F0EBE1] bg-[#F0EBE1]"
         >
-          {isRunning ? 'Pausar' : 'Iniciar'}
+          {isRunning ? 'PAUSAR' : 'INICIAR'}
         </Button>
         <Button
           onClick={handleReset}
