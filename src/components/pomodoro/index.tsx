@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
-import { FiChevronsRight, FiRotateCw } from 'react-icons/fi';
-import { Button } from '../ui/button';
-import { TimeControl } from './TimeControl';
+import { useEffect, useRef, useState } from 'react'
+import { FiChevronsRight, FiRotateCw } from 'react-icons/fi'
+import { Button } from '../ui/button'
+import { TimeControl } from './TimeControl'
 
 const DURATION_DEFAULT = 25 * 60 * 1000 // 25 minutos em ms
 const PAUSE_DEFAULT = 5 * 60 * 1000 // 5 minutos em ms
@@ -14,6 +14,7 @@ export function Pomodoro() {
   const [restante, setRestante] = useState(DURATION_DEFAULT || PAUSE_DEFAULT)
   const [isRunning, setIsRunning] = useState(false)
   const [currentPhase, setCurrentPhase] = useState(0)
+  const [totalFocus, setTotalFocus] = useState(0)
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const alvoRef = useRef<number>(0) // timestamp de quando deve terminar
@@ -30,6 +31,9 @@ export function Pomodoro() {
   ]
 
   const currentPhaseData = focusFlow[currentPhase]
+
+  const prog = 1 - restante / currentPhaseData.duration
+  const discoGrad = `conic-gradient(#F0EBE1 ${prog * 360}deg, rgba(240,235,225,.24) 0deg)`
 
   function tick() {
     try {
@@ -70,6 +74,18 @@ export function Pomodoro() {
     setRestante(DURATION_DEFAULT)
   }
 
+  function handleNextPhase() {
+    pararInterval()
+    setIsRunning(false)
+    setTotalFocus(
+      (prev) =>
+        prev +
+        (currentPhaseData.type === 'focus' ? currentPhaseData.duration : 0),
+    )
+    setCurrentPhase((prev) => (prev + 1) % focusFlow.length)
+    setRestante(focusFlow[(currentPhase + 1) % focusFlow.length].duration)
+  }
+
   function handleMoreDuration() {
     setDuration((prev) => prev + 1 * 60 * 1000)
     setRestante((prev) => prev + 1 * 60 * 1000)
@@ -102,7 +118,7 @@ export function Pomodoro() {
       duracao: duration,
       handleLessDuration: handleLessDuration,
       handleMoreDuration: handleMoreDuration,
-    }, 
+    },
     {
       title: 'PAUSA',
       duracao: pause,
@@ -114,7 +130,7 @@ export function Pomodoro() {
       duracao: longPause,
       handleLessDuration: handleLessLongPause,
       handleMoreDuration: handleMoreLongPause,
-    }
+    },
   ]
 
   // limpeza ao desmontar o componente
@@ -122,65 +138,86 @@ export function Pomodoro() {
     return () => pararInterval()
   }, [])
 
+  const formatHours = (milliseconds: number) => {
+    const hours = Math.floor(milliseconds / (1000 * 60 * 60))
+    const minutes = Math.floor((milliseconds % (1000 * 60 * 60)) / (1000 * 60))
+    return `${hours}h ${minutes}m`
+  }
+
   return (
-    <div className="h-full w-full flex justify-center items-center flex-col gap-4 bg-[#1D396E]">
-      <div className="w-full px-12 ">
-        <div className="w-full flex justify-between text-[rgba(240,235,225,.62)]">
+    <div className="h-full w-full flex items-center flex-col bg-[#1D396E]">
+      <div className="w-full px-12 mt-4">
+        <div className="w-full flex justify-between text-sm text-[rgba(240,235,225,.62)] geist-mono">
           <span>{currentPhaseData.title}</span>
-          <span>Sessão - {currentPhase + 1} / {focusFlow.length}</span>
+          <span>
+            SESSÃO {currentPhase + 1} / {focusFlow.length}
+          </span>
         </div>
       </div>
 
-      <div className="h-75 w-78 rounded-[35%] flex justify-center items-center flex-col gap-4 bg-[rgba(240,235,225,.24)]">
-        <div className="z-10 h-60 w-60 bg-[#1D396E] rounded-full flex justify-center items-center flex-col">
-          <p className="text-6xl">
-            {minutos}:{String(segundos).padStart(2, '0')}
+      <div className="flex-1 flex flex-col justify-center items-center gap-4">
+        <div
+          className="h-75 w-78 rounded-[35%] flex justify-center items-center flex-col gap-4 bg-[rgba(240,235,225,.24)]"
+          style={{ background: discoGrad }}
+        >
+          <div className="z-10 h-60 w-60 bg-[#1D396E] rounded-full flex justify-center items-center flex-col">
+            <p className="text-6xl geist-mono">
+              {minutos}:{String(segundos).padStart(2, '0')}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-col items-center text-[rgba(240,235,225,.62)]">
+          <p className="text-xs geist-mono">EM CURSO</p>
+          <p className="font-bold text-2xl text-[#F0EBE1]">
+            Ajustar layout do painel de relatórios
+          </p>
+        </div>
+
+        <div className="flex">
+          <Button
+            onClick={isRunning ? handlePause : handleStart}
+            type="button"
+            variant="default"
+            className="px-12 py-10 cursor-pointer rounded-none text-[#1D396E] text-md border-3 border-[#F0EBE1] bg-[#F0EBE1] geist-mono"
+          >
+            {isRunning ? 'PAUSAR' : 'INICIAR'}
+          </Button>
+          <Button
+            onClick={handleReset}
+            variant="default"
+            className="w-20 py-10 cursor-pointer rounded-none text-[rgba(240,235,225,.24)] bg-[#1D396E] text-md border-3 border-[rgba(240,235,225,.24)] hover:text-[#F0EBE1]"
+          >
+            <FiRotateCw />
+          </Button>
+          <Button
+            onClick={handleNextPhase}
+            variant="default"
+            className="w-20 py-10 cursor-pointer rounded-none text-[rgba(240,235,225,.24)] bg-[#1D396E] text-md border-r-3 border-t-3 border-b-3 border-[rgba(240,235,225,.24)] hover:text-[#F0EBE1]"
+          >
+            <FiChevronsRight />
+          </Button>
+        </div>
+      </div>
+
+      <div className="w-full flex items-center justify-around border-t-2 border-[rgba(240,235,225,.24)] geist-mono">
+        <div className="flex gap-8">
+          {mapTimeControls.map((control, index) => (
+            <TimeControl
+              key={index}
+              title={control.title}
+              duracao={control.duracao}
+              handleLessDuration={control.handleLessDuration}
+              handleMoreDuration={control.handleMoreDuration}
+            />
+          ))}
+        </div>
+        <div>
+          <p className="text-sm text-[rgba(240,235,225,.62)]">
+            FOCO {formatHours(totalFocus)}
           </p>
         </div>
       </div>
-
-      <div className="flex flex-col items-center text-[rgba(240,235,225,.62)]">
-        <p>EM CURSO</p>
-        <p className="font-bold">Ajustar layout do pomodoro</p>
-      </div>
-
-      <div className="flex">
-        <Button
-          onClick={isRunning ? handlePause : handleStart}
-          type="button"
-          variant="default"
-          className="px-12 py-10 cursor-pointer rounded-none text-[#1D396E] text-md border-3 border-[#F0EBE1] bg-[#F0EBE1]"
-        >
-          {isRunning ? 'PAUSAR' : 'INICIAR'}
-        </Button>
-        <Button
-          onClick={handleReset}
-          variant="default"
-          className="w-20 py-10 cursor-pointer rounded-none text-[rgba(240,235,225,.24)] bg-[#1D396E] text-md border-3 border-[rgba(240,235,225,.24)] hover:text-[#F0EBE1]"
-        >
-          <FiRotateCw />
-        </Button>
-        <Button
-          onClick={() => console.log('Pular')}
-          variant="default"
-          className="w-20 py-10 cursor-pointer rounded-none text-[rgba(240,235,225,.24)] bg-[#1D396E] text-md border-r-3 border-t-3 border-b-3 border-[rgba(240,235,225,.24)] hover:text-[#F0EBE1]"
-        >
-          <FiChevronsRight />
-        </Button>
-      </div>
-
-      <div className="flex gap-4">
-        {mapTimeControls.map((control, index) => (
-          <TimeControl
-            key={index}
-            title={control.title}
-            duracao={control.duracao}
-            handleLessDuration={control.handleLessDuration}
-            handleMoreDuration={control.handleMoreDuration}
-          />
-        ))}
-      </div>
-
     </div>
   )
 }
