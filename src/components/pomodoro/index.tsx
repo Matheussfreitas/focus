@@ -179,21 +179,21 @@ export function Pomodoro() {
             onClick={isRunning ? handlePause : handleStart}
             type="button"
             variant="default"
-            className="px-12 py-10 cursor-pointer rounded-none text-[#1D396E] text-md border-3 border-[#F0EBE1] bg-[#F0EBE1] geist-mono"
+            className="px-12 py-8 cursor-pointer rounded-none text-[#1D396E] text-md border-3 border-[#F0EBE1] bg-[#F0EBE1] geist-mono"
           >
             {isRunning ? 'PAUSAR' : 'INICIAR'}
           </Button>
           <Button
             onClick={handleReset}
             variant="default"
-            className="w-20 py-10 cursor-pointer rounded-none text-[rgba(240,235,225,.24)] bg-[#1D396E] text-md border-3 border-[rgba(240,235,225,.24)] hover:text-[#F0EBE1]"
+            className="w-20 py-8 cursor-pointer rounded-none text-[rgba(240,235,225,.24)] bg-[#1D396E] text-md border-3 border-[rgba(240,235,225,.24)] hover:text-[#F0EBE1]"
           >
             <FiRotateCw />
           </Button>
           <Button
             onClick={handleNextPhase}
             variant="default"
-            className="w-20 py-10 cursor-pointer rounded-none text-[rgba(240,235,225,.24)] bg-[#1D396E] text-md border-r-3 border-t-3 border-b-3 border-[rgba(240,235,225,.24)] hover:text-[#F0EBE1]"
+            className="w-20 py-8 cursor-pointer rounded-none text-[rgba(240,235,225,.24)] bg-[#1D396E] text-md border-r-3 border-t-3 border-b-3 border-[rgba(240,235,225,.24)] hover:text-[#F0EBE1]"
           >
             <FiChevronsRight />
           </Button>

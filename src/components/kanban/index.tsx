@@ -1,10 +1,11 @@
-import { tasks } from './data';
-import { KanbanCard } from './KanbanCard';
-import type { Task } from './types/task.type';
+import { tasks } from './data'
+import { KanbanCard } from './KanbanCard'
+import { KanbanColumn } from './KanbanColumn';
+import type { Task } from './types/task.type'
 
 const columns = [
-  { id: 'TODO', title: 'A fazer' },
-  { id: 'IN_PROGRESS', title: 'Em Progresso' },
+  { id: 'TODO', title: 'A Fazer' },
+  { id: 'IN_PROGRESS', title: 'Fazendo' },
   { id: 'DONE', title: 'Feito' },
 ]
 
@@ -32,19 +33,10 @@ export function Kanban() {
   }
 
   return (
-    <div className="flex-1 flex items-center justify-center border border-amber-400 text-[#131A26]">
-      <div className="flex">
-        {columns.map((column) => (
-          <div key={column.id}>
-            <div className="bg-[#1D396E] text-[#F4F6FA] p-6">
-              <h2>{column.title}</h2>
-            </div>
-            {tasks
-              .filter((task) => task.status === column.id)
-              .map((task) => (
-                <KanbanCard key={task.id} task={task} />
-              ))}
-          </div>
+    <div className="h-full flex-1 flex items-center justify-center bg-[#EDE7DC] text-[#131A26] ">
+      <div className="flex grow h-full">
+        {columns.map((column, index) => (
+          <KanbanColumn key={column.id} column={column} tasks={tasks} index={index + 1} />
         ))}
       </div>
     </div>
