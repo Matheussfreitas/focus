@@ -4,9 +4,14 @@ import type { Task } from "./types/task.type";
 export const tasks: Task[] = [
   {
     id: '1',
-    title: 'Task 1',
+    title: 'Implementar MinIO',
     description: 'Description 1',
-    tag: null,
+    tag: {
+      id: '1',
+      name: 'trabalho',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
     tagId: null,
     status: TaskStatus.TODO,
     dueDate: new Date(),
@@ -15,9 +20,14 @@ export const tasks: Task[] = [
   },
   {
     id: '2',
-    title: 'Task 2',
+    title: 'Estudar cloud',
     description: 'Description 2',
-    tag: null,
+    tag: {
+      id: '2',
+      name: 'estudo',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
     tagId: null,
     status: TaskStatus.IN_PROGRESS,
     dueDate: new Date(),
@@ -26,9 +36,14 @@ export const tasks: Task[] = [
   },
   {
     id: '3',
-    title: 'Task 3',
+    title: 'Escrever artigo sobre cloud',
     description: 'Description 3',
-    tag: null,
+    tag: {
+      id: '3',
+      name: 'pessoal',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
     tagId: null,
     status: TaskStatus.DONE,
     dueDate: new Date(),
