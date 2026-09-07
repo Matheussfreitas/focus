@@ -1,4 +1,6 @@
+import type { TaskStatus } from "#/generated/prisma/enums.ts";
+
 export type Column = {
-  id: string;
+  id: TaskStatus;
   title: string;
 }

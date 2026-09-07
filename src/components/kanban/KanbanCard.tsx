@@ -1,11 +1,13 @@
 import { BiSolidRightArrow } from 'react-icons/bi'
 import { Checkbox } from '../ui/checkbox'
-import { tasks } from './data'
 import type { Task } from './types/task.type'
 
 // bg-[#EDE7DC]
+interface KanbanCardProps {
+  task: Task
+}
 
-export function KanbanCard({ task }: { task: Task }) {
+export function KanbanCard({ task }: KanbanCardProps) {
   const formatDate = (date: Date) => {
     if (date.getDate() === new Date().getDate()) {
       return 'Hoje'
@@ -29,21 +31,19 @@ export function KanbanCard({ task }: { task: Task }) {
       case 'DONE':
         return true
       default:
-        return status
+        return false
     }
-  }
-
-  async function updatedTaskStatus(id: string) {
-    const item = tasks.find((t) => t.id === id)
-    if (item?.status === 'DONE') {
-      return false
-    }
-    item.status = 'DONE'
-    return true
   }
 
   return (
-    <div className="flex items-center gap-2 p-2 schibsted-grotesk text-xs font-medium border-l-3 border-amber-500 border-b border-b-[rgba(17,26,43,.16)] hover:cursor-pointer">
+    <div
+      className="flex items-center gap-2 p-2 schibsted-grotesk text-xs font-medium border-l-3 border-amber-500 border-b border-b-[rgba(17,26,43,.16)] hover:cursor-pointer"
+      draggable={true}
+      onDragStart={(e) => {
+        e.dataTransfer.setData('text/plain', task.id)
+        console.log(`Drag start: ${task.title}`)
+      }}
+    >
       <div>
         <Checkbox
           checked={formatTaskStatus(task.status)}
