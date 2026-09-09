@@ -1,4 +1,5 @@
 import { subHours } from 'date-fns'
+import { Login } from './login';
 
 export default function Header() {
   const day = subHours(new Date(), 3).getDate()
@@ -40,7 +41,6 @@ export default function Header() {
 
         <div className="h-full flex items-center gap-1.5 sm:gap-2 ml-auto">
           {/* <BetterAuthHeader /> */}
-          <div className="h-full w-0.5 bg-[#111A2B]" />
           <div className="flex items-center">
             {colors.map((color, index) => (
               <div
@@ -50,6 +50,8 @@ export default function Header() {
               />
             ))}
           </div>
+          <div className="h-full w-0.5 bg-[#111A2B]" />
+          <Login />
           {/* <ThemeToggle /> */}
         </div>
       </nav>
