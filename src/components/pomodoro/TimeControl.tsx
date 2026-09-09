@@ -15,7 +15,7 @@ export function TimeControl({
   handleMoreDuration,
 }: TimeControlProps) {
   return (
-    <div className="flex items-center text-sm text-[rgba(240,235,225,.62)]">
+    <div className="flex items-center text-xs text-[rgba(240,235,225,.62)]">
       <p>{title}</p>
       <span className="flex items-center gap-2 ml-2">
         <Button variant="ghost" onClick={handleLessDuration}>
