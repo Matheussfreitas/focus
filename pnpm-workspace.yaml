@@ -1,6 +1,7 @@
 allowBuilds:
   '@google/genai': true
   '@prisma/engines': true
+  bcrypt: set this to true or false
   esbuild: true
   prisma: true
   protobufjs: true

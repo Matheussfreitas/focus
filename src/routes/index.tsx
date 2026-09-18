@@ -1,7 +1,7 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { useEffect, useRef, useState } from 'react'
-import { Kanban } from '../components/kanban'
-import { Pomodoro } from '../components/pomodoro'
+import { createFileRoute } from '@tanstack/react-router';
+import { useEffect, useRef, useState } from 'react';
+import { Kanban } from '../components/kanban';
+import { Pomodoro } from '../components/pomodoro';
 
 export const Route = createFileRoute('/')({
   component: HomePage,
@@ -51,12 +51,14 @@ function HomePage() {
       <div className="min-w-0" style={{ flex: `${leftGrow} 1 0` }}>
         <Pomodoro />
       </div>
+
       <div
         className="w-2.5 cursor-col-resize touch-none bg-[#111A2B] flex flex-col justify-center items-center"
         onPointerDown={handlePointerDown}
       >
         <div className="bg-[#EDE7DC] h-10 w-0.5 select-none"></div>
       </div>
+      
       <div className="min-w-0" style={{ flex: `${rightGrow} 1 0` }}>
         <Kanban />
       </div>

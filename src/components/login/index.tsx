@@ -1,3 +1,4 @@
+import { authClient } from '#/lib/auth-client.ts'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -16,7 +17,10 @@ const schema = z
       .optional(),
     email: z.string().email('Email inválido'),
     password: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres'),
-    confirmPassword: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres').optional(),
+    confirmPassword: z
+      .string()
+      .min(6, 'A senha deve ter pelo menos 6 caracteres')
+      .optional(),
   })
   .refine(
     (data) => {
@@ -35,7 +39,7 @@ type SchemaFormData = z.infer<typeof schema>
 
 export function Login() {
   const [loginOpen, setLoginOpen] = useState(true)
-  
+
   const {
     handleSubmit,
     register,
@@ -45,13 +49,22 @@ export function Login() {
     resolver: zodResolver(schema),
   })
 
-  const onLogin = (data: SchemaFormData) => {
+  const onLogin = async (data: SchemaFormData) => {
     console.log('Login data:', data)
+    await authClient.signIn.email({
+      email: data.email,
+      password: data.password,
+    })
     reset()
   }
 
-  const onRegister = (data: SchemaFormData) => {
+  const onRegister = async (data: SchemaFormData) => {
     console.log('Register data:', data)
+    await authClient.signUp.email({
+      name: data.name || '',
+      email: data.email,
+      password: data.password,
+    })
     reset()
   }
 
@@ -64,9 +77,9 @@ export function Login() {
     <Dialog>
       <DialogTrigger asChild>
         <Button
-          size="sm"
+          size="xs"
           variant="default"
-          className="text-xs bg-[#111A2B] text-[#EDE7DC]"
+          className="text-xs bg-[#111A2B] text-[#EDE7DC] rounded-xs cursor-pointer px-4"
         >
           Entrar
         </Button>
