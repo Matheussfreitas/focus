@@ -13,3 +13,4 @@ __unconfig*
 todos.json
 .neon
 src/generated/prisma
+.vercel
