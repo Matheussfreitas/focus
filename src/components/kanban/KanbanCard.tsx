@@ -1,13 +1,17 @@
 import { BiSolidRightArrow } from 'react-icons/bi'
+import { TaskStatus } from '#/generated/prisma/enums.ts'
 import { Checkbox } from '../ui/checkbox'
+import { TAG_COLOR_HEX } from './tagColors'
 import type { Task } from './types/task.type'
 
 // bg-[#EDE7DC]
 interface KanbanCardProps {
   task: Task
+  onToggleDone: (task: Task) => void
+  onStartTask: (task: Task) => void
 }
 
-export function KanbanCard({ task }: KanbanCardProps) {
+export function KanbanCard({ task, onToggleDone, onStartTask }: KanbanCardProps) {
   const formatDate = (date: Date) => {
     if (date.getDate() === new Date().getDate()) {
       return 'Hoje'
@@ -47,15 +51,31 @@ export function KanbanCard({ task }: KanbanCardProps) {
       <div>
         <Checkbox
           checked={formatTaskStatus(task.status)}
-          onCheckedChange={() => console.log('abu')}
+          onCheckedChange={(checked) =>
+            onToggleDone({
+              ...task,
+              status: checked === true ? TaskStatus.DONE : TaskStatus.TODO,
+            })
+          }
           className="border-[rgba(17,26,43,.16)]"
         />
       </div>
       <div className="flex-1 flex flex-col gap-2 px-4 mr-4">
         <p className="text-[#131A26] font-semibold text-[13px]">{task.title}</p>
+        {task.description && (
+          <p className="text-[#5D5344] text-xs">{task.description}</p>
+        )}
         <div className="flex justify-between items-center">
           {task.tag && (
-            <span className="text-blue-900">{task.tag.name.toUpperCase()}</span>
+            <span className="flex items-center gap-1">
+              <span
+                className="h-2 w-2 shrink-0"
+                style={{ backgroundColor: TAG_COLOR_HEX[task.tag.color] }}
+              />
+              <span className="text-[#5D5344]">
+                {task.tag.name.toUpperCase()}
+              </span>
+            </span>
           )}
           {task.dueDate && (
             <p
@@ -69,9 +89,14 @@ export function KanbanCard({ task }: KanbanCardProps) {
           )}
         </div>
       </div>
-      <div className="ml-auto">
+      <button
+        type="button"
+        onClick={() => onStartTask(task)}
+        className="ml-auto cursor-pointer"
+        title="Iniciar no Pomodoro"
+      >
         <BiSolidRightArrow className="w-3 h-3 text-[#5D5344]" />
-      </div>
+      </button>
     </div>
   )
 }

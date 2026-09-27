@@ -1,5 +1,5 @@
-import { PlusIcon } from 'lucide-react'
 import { useState } from 'react'
+import { CreateTaskDialog } from './CreateTaskDialog'
 import { KanbanCard } from './KanbanCard'
 import type { Column } from './types/column.type'
 import type { Task } from './types/task.type'
@@ -9,6 +9,14 @@ interface KanbanColumnProps {
   tasks: Task[]
   index: number
   updateTask: (task: Task) => void
+  onCreateTask: (data: {
+    title: string
+    description?: string
+    dueDate?: Date
+    tagId?: string
+    status: Column['id']
+  }) => Promise<void>
+  onStartTask: (task: Task) => void
 }
 
 export function KanbanColumn({
@@ -16,6 +24,8 @@ export function KanbanColumn({
   tasks,
   index,
   updateTask,
+  onCreateTask,
+  onStartTask,
 }: Readonly<KanbanColumnProps>) {
   const [isOver, setIsOver] = useState(false)
 
@@ -61,19 +71,17 @@ export function KanbanColumn({
         </span>
         <span className="flex gap-2 items-center">
           <p>{filterTasksByColumn.length}</p>
-          {index === 1 && (
-            <button
-              onClick={() => console.log('Create task')}
-              className="ml-2 hover:text-[#131A26] cursor-pointer"
-            >
-              <PlusIcon className="h-3 w-3" />
-            </button>
-          )}
+          <CreateTaskDialog status={column.id} onCreate={onCreateTask} />
         </span>
       </div>
       <div>
         {filterTasksByColumn.map((task) => (
-          <KanbanCard key={task.id} task={task} />
+          <KanbanCard
+            key={task.id}
+            task={task}
+            onToggleDone={updateTask}
+            onStartTask={onStartTask}
+          />
         ))}
       </div>
     </div>

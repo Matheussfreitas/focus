@@ -1,8 +1,7 @@
 import { TaskStatus } from '#/generated/prisma/enums.ts'
-import { useState } from 'react'
-import { tasks } from './data'
 import { KanbanColumn } from './KanbanColumn'
 import type { Task } from './types/task.type'
+import { useTaskQueries } from './queries.task'
 
 const columns = [
   { id: TaskStatus.TODO, title: 'A Fazer' },
@@ -10,30 +9,29 @@ const columns = [
   { id: TaskStatus.DONE, title: 'Feito' },
 ]
 
-export function Kanban() {
-  const [tasksState, setTasksState] = useState<Task[]>(tasks)
+interface KanbanProps {
+  onStartTask: (task: Task) => void
+}
 
-  const handleCreateTask = (task: Task) => {
-    try {
-      tasks.push({
-        ...task,
-        id: Date.now().toString(),
-      })
-    } catch (error) {
-      console.error('Error creating task:', error)
-    }
-  }
+export function Kanban({ onStartTask }: Readonly<KanbanProps>) {
+  const { tasksState, createTaskMutation, updateTaskMutation } = useTaskQueries()
 
-  const handleUpdateTask = (updatedTask: Task) => {
+  const handleUpdateTask = async (updatedTask: Task) => {
     try {
-      const index = tasksState.findIndex((task) => task.id === updatedTask.id)
-      if (index !== -1) {
-        tasksState[index] = updatedTask
-      }
-      setTasksState([...tasksState])
+      await updateTaskMutation.mutateAsync({ data: updatedTask })
     } catch (error) {
       console.error('Error updating task:', error)
     }
+  }
+
+  const handleCreateTask = async (data: {
+    title: string
+    description?: string
+    dueDate?: Date
+    tagId?: string
+    status: TaskStatus
+  }) => {
+    await createTaskMutation.mutateAsync({ data })
   }
 
   return (
@@ -46,6 +44,8 @@ export function Kanban() {
             tasks={tasksState}
             index={index + 1}
             updateTask={handleUpdateTask}
+            onCreateTask={handleCreateTask}
+            onStartTask={onStartTask}
           />
         ))}
       </div>

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { FiChevronsRight, FiRotateCw } from 'react-icons/fi'
+import type { Task } from '../kanban/types/task.type'
 import { Button } from '../ui/button'
 import { TimeControl } from './TimeControl'
 
@@ -7,7 +8,11 @@ const DURATION_DEFAULT = 25 * 60 * 1000 // 25 minutos em ms
 const PAUSE_DEFAULT = 5 * 60 * 1000 // 5 minutos em ms
 const LONG_PAUSE_DEFAULT = 15 * 60 * 1000 // 15 minutos em ms
 
-export function Pomodoro() {
+interface PomodoroProps {
+  activeTask?: Task | null
+}
+
+export function Pomodoro({ activeTask }: Readonly<PomodoroProps>) {
   const [duration, setDuration] = useState(DURATION_DEFAULT)
   const [pause, setPause] = useState(PAUSE_DEFAULT)
   const [longPause, setLongPause] = useState(LONG_PAUSE_DEFAULT)
@@ -138,6 +143,18 @@ export function Pomodoro() {
     return () => pararInterval()
   }, [])
 
+  // ao selecionar uma nova task no Kanban, inicia o foco automaticamente
+  useEffect(() => {
+    if (!activeTask) return
+    pararInterval()
+    setCurrentPhase(0)
+    setRestante(duration)
+    alvoRef.current = Date.now() + duration
+    setIsRunning(true)
+    intervalRef.current = setInterval(tick, 100)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTask?.id])
+
   const formatHours = (milliseconds: number) => {
     const hours = Math.floor(milliseconds / (1000 * 60 * 60))
     const minutes = Math.floor((milliseconds % (1000 * 60 * 60)) / (1000 * 60))
@@ -170,7 +187,7 @@ export function Pomodoro() {
         <div className="flex flex-col items-center text-[rgba(240,235,225,.62)]">
           <p className="text-xs geist-mono">EM CURSO</p>
           <p className="font-bold text-2xl text-[#F0EBE1]">
-            Ajustar layout do painel de relatórios
+            {activeTask?.title ?? 'Nenhuma task selecionada'}
           </p>
         </div>
 

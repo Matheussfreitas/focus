@@ -1,6 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useEffect, useRef, useState } from 'react';
+import { authClient } from '#/lib/auth-client.ts'
 import { Kanban } from '../components/kanban';
+import type { Task } from '../components/kanban/types/task.type';
 import { Pomodoro } from '../components/pomodoro';
 
 export const Route = createFileRoute('/')({
@@ -8,6 +10,8 @@ export const Route = createFileRoute('/')({
 })
 
 function HomePage() {
+  const { data: session, isPending } = authClient.useSession()
+  const [activeTask, setActiveTask] = useState<Task | null>(null)
   const [percentageScreen, setPercentageScreen] = useState<number>(0.42)
   const isDraggingRef = useRef(false)
   const areaRef = useRef<HTMLDivElement>(null)
@@ -15,7 +19,7 @@ function HomePage() {
   const leftGrow = Math.round(percentageScreen * 100)
   const rightGrow = Math.round((1 - percentageScreen) * 100)
 
-  const handlePointerDown = (e: React.PointerEvent) => {
+  const handlePointerDown = () => {
     isDraggingRef.current = true
     document.body.style.userSelect = 'none'
   }
@@ -46,22 +50,31 @@ function HomePage() {
     }
   }, [])
 
+  const showKanban = !isPending && !!session?.user
+
   return (
     <div ref={areaRef} className="h-full flex">
-      <div className="min-w-0" style={{ flex: `${leftGrow} 1 0` }}>
-        <Pomodoro />
+      <div
+        className="min-w-0"
+        style={showKanban ? { flex: `${leftGrow} 1 0` } : { flex: '1 1 0' }}
+      >
+        <Pomodoro activeTask={activeTask} />
       </div>
 
-      <div
-        className="w-2.5 cursor-col-resize touch-none bg-[#111A2B] flex flex-col justify-center items-center"
-        onPointerDown={handlePointerDown}
-      >
-        <div className="bg-[#EDE7DC] h-10 w-0.5 select-none"></div>
-      </div>
-      
-      <div className="min-w-0" style={{ flex: `${rightGrow} 1 0` }}>
-        <Kanban />
-      </div>
+      {showKanban && (
+        <>
+          <div
+            className="w-2.5 cursor-col-resize touch-none bg-[#111A2B] flex flex-col justify-center items-center"
+            onPointerDown={handlePointerDown}
+          >
+            <div className="bg-[#EDE7DC] h-10 w-0.5 select-none"></div>
+          </div>
+
+          <div className="min-w-0" style={{ flex: `${rightGrow} 1 0` }}>
+            <Kanban onStartTask={setActiveTask} />
+          </div>
+        </>
+      )}
     </div>
   )
 }

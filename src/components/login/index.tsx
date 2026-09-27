@@ -131,6 +131,7 @@ export function Login() {
                     id="email-1"
                     {...register('email', { required: true })}
                     placeholder="Digite seu email"
+                    className="bg-white text-[#111A2B] border-[#111A2B]/30 placeholder:text-[#5D5344] focus-visible:border-[#111A2B] focus-visible:ring-[#111A2B]/30"
                   />
                   <FieldError>
                     {errors.email && (
@@ -147,6 +148,7 @@ export function Login() {
                     {...register('password', { required: true })}
                     placeholder="Digite sua senha"
                     type="password"
+                    className="bg-white text-[#111A2B] border-[#111A2B]/30 placeholder:text-[#5D5344] focus-visible:border-[#111A2B] focus-visible:ring-[#111A2B]/30"
                   />
                   <FieldError>
                     {errors.password && (
@@ -178,6 +180,7 @@ export function Login() {
                     id="name-1"
                     {...register('name', { required: true })}
                     placeholder="Digite seu nome"
+                    className="bg-white text-[#111A2B] border-[#111A2B]/30 placeholder:text-[#5D5344] focus-visible:border-[#111A2B] focus-visible:ring-[#111A2B]/30"
                   />
                   <FieldError>
                     {errors.name && (
@@ -193,6 +196,7 @@ export function Login() {
                     id="email-1"
                     {...register('email', { required: true })}
                     placeholder="Digite seu email"
+                    className="bg-white text-[#111A2B] border-[#111A2B]/30 placeholder:text-[#5D5344] focus-visible:border-[#111A2B] focus-visible:ring-[#111A2B]/30"
                   />
                   <FieldError>
                     {errors.email && (
@@ -209,6 +213,7 @@ export function Login() {
                     {...register('password', { required: true })}
                     type="password"
                     placeholder="Digite sua senha"
+                    className="bg-white text-[#111A2B] border-[#111A2B]/30 placeholder:text-[#5D5344] focus-visible:border-[#111A2B] focus-visible:ring-[#111A2B]/30"
                   />
                   <FieldError>
                     {errors.password && (
@@ -225,6 +230,7 @@ export function Login() {
                     {...register('confirmPassword', { required: true })}
                     type="password"
                     placeholder="Confirme sua senha"
+                    className="bg-white text-[#111A2B] border-[#111A2B]/30 placeholder:text-[#5D5344] focus-visible:border-[#111A2B] focus-visible:ring-[#111A2B]/30"
                   />
                   <FieldError>
                     {errors.confirmPassword && (
