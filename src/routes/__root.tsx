@@ -45,6 +45,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
       <head>
+        <link rel="icon" href="/favicon.svg" />
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <HeadContent />
       </head>
