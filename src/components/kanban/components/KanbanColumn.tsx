@@ -7,6 +7,7 @@ import type { Task } from '../types/task.type'
 interface KanbanColumnProps {
   column: Column
   active: boolean
+  loading: boolean
   tasks: Task[]
   index: number
   updateTask: (task: Task) => void
@@ -24,6 +25,7 @@ interface KanbanColumnProps {
 export function KanbanColumn({
   column,
   active,
+  loading,
   tasks,
   index,
   updateTask,
@@ -79,7 +81,15 @@ export function KanbanColumn({
         </span>
       </div>
       <div className="flex-1 min-h-0 overflow-y-auto">
-        {filterTasksByColumn.length === 0 && (
+        {loading &&
+          [0, 1, 2].map((i) => (
+            <div
+              key={i}
+              aria-hidden
+              className="min-h-28 md:min-h-24 animate-pulse border-b border-b-ink/16 bg-ink/5"
+            />
+          ))}
+        {!loading && filterTasksByColumn.length === 0 && (
           <p className="p-4 text-sm text-center text-ink-muted">
             Nenhuma tarefa.
           </p>

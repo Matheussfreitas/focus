@@ -1,16 +1,32 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useRef, useState } from 'react'
 import { authClient } from '#/lib/auth-client.ts'
+import { getServerSession } from '#/server/auth/session.ts'
+import { tagsQueryOptions } from '../components/kanban/queries.tag'
+import { tasksQueryOptions } from '../components/kanban/queries.task'
+import { canRunTour, getPendingTour, startTour } from '#/lib/tour.ts'
 import { Kanban } from '../components/kanban'
 import type { Task } from '../components/kanban/types/task.type'
 import { Pomodoro } from '../components/pomodoro'
 
 export const Route = createFileRoute('/')({
+  // Sessão lida no servidor: a página já nasce sabendo se há usuário.
+  beforeLoad: async () => ({ session: await getServerSession() }),
+  // Dispara as consultas sem aguardar: o HTML não espera o banco e os dados
+  // chegam ao navegador junto da página, sem a cascata sessão -> tarefas.
+  loader: ({ context }) => {
+    if (!context.session) return
+    void context.queryClient.prefetchQuery(tasksQueryOptions)
+    void context.queryClient.prefetchQuery(tagsQueryOptions)
+  },
   component: HomePage,
 })
 
 function HomePage() {
-  const { data: session, isPending } = authClient.useSession()
+  const { session: serverSession } = Route.useRouteContext()
+  const { data: clientSession, isPending } = authClient.useSession()
+  // Até o cliente resolver a sessão, vale a do servidor (evita o "vazio").
+  const user = isPending ? serverSession?.user : clientSession?.user
   const [activeTask, setActiveTask] = useState<Task | null>(null)
   const [percentageScreen, setPercentageScreen] = useState<number>(0.42)
   const [mobileView, setMobileView] = useState<'timer' | 'tasks'>('timer')
@@ -51,7 +67,21 @@ function HomePage() {
     }
   }, [])
 
-  const showKanban = !isPending && !!session?.user
+  const showKanban = !!user
+
+  // Tour automático (só desktop/notebook): introdução na primeira visita e,
+  // se o usuário só entrou depois, a parte do kanban na primeira vez logado.
+  const loggedIn = !!user
+  useEffect(() => {
+    if (isPending || !canRunTour()) return
+    const part = getPendingTour(loggedIn)
+    if (!part) return
+    // espera o layout e as tarefas montarem antes de procurar os elementos
+    const timer = setTimeout(() => {
+      void startTour({ loggedIn, part })
+    }, 800)
+    return () => clearTimeout(timer)
+  }, [isPending, loggedIn])
 
   const handleStartTask = (task: Task) => {
     setActiveTask(task)
@@ -81,6 +111,7 @@ function HomePage() {
       {showKanban && (
         <>
           <div
+            data-tour="divider"
             className="hidden md:flex w-2.5 cursor-col-resize touch-none bg-ink flex-col justify-center items-center"
             onPointerDown={handlePointerDown}
           >

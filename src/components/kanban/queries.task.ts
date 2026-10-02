@@ -4,16 +4,23 @@ import {
   getTasks,
   updateTask,
 } from '#/server/tasks/tasks.ts'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  queryOptions,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
 import type { Task } from './types/task.type'
+
+export const tasksQueryOptions = queryOptions({
+  queryKey: ['tasks'],
+  queryFn: () => getTasks(),
+})
 
 export function useTaskQueries() {
   const queryClient = useQueryClient()
 
-  const { data: tasksState = [], isLoading } = useQuery({
-    queryKey: ['tasks'],
-    queryFn: () => getTasks(),
-  })
+  const { data: tasksState = [], isLoading } = useQuery(tasksQueryOptions)
 
   const createTaskMutation = useMutation({
     mutationFn: createTask,

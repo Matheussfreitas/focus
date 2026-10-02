@@ -160,6 +160,7 @@ export function Pomodoro({ activeTask }: Readonly<PomodoroProps>) {
 
       <div className="flex-1 flex flex-col justify-center items-center gap-4">
         <div
+          data-tour="timer"
           className="h-75 w-78 rounded-[35%] flex justify-center items-center flex-col gap-4 bg-cream/24"
           style={{ background: discoGrad }}
         >
@@ -177,7 +178,7 @@ export function Pomodoro({ activeTask }: Readonly<PomodoroProps>) {
           </p>
         </div>
 
-        <div className="flex">
+        <div className="flex" data-tour="timer-controls">
           <Button
             onClick={isRunning ? handlePause : handleStart}
             type="button"
@@ -203,7 +204,9 @@ export function Pomodoro({ activeTask }: Readonly<PomodoroProps>) {
         </div>
       </div>
 
-      <div className="w-full py-3 md:py-0 md:h-15 flex items-center justify-center border-t-2 border-cream/24 geist-mono">
+      <div
+        data-tour="durations"
+        className="w-full py-3 md:py-0 md:h-15 flex items-center justify-center border-t-2 border-cream/24 geist-mono">
         <div className="grid w-full grid-cols-3 gap-1 px-2 md:flex md:w-auto md:gap-8 md:px-0">
           {mapTimeControls.map((control) => (
             <TimeControl

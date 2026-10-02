@@ -142,6 +142,7 @@ export function Login() {
     <Dialog>
       <DialogTrigger asChild>
         <Button
+          data-tour="login"
           size="xs"
           variant="default"
           className="text-xs bg-ink text-sand rounded-xs cursor-pointer px-4"

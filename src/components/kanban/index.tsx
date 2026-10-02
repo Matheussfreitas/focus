@@ -18,6 +18,7 @@ export function Kanban({ onStartTask }: Readonly<KanbanProps>) {
   const [activeColumn, setActiveColumn] = useState<TaskStatus>(TaskStatus.TODO)
   const {
     tasksState,
+    isLoading,
     createTaskMutation,
     updateTaskMutation,
     deleteTaskMutation,
@@ -50,7 +51,7 @@ export function Kanban({ onStartTask }: Readonly<KanbanProps>) {
   }
 
   return (
-    <div className="h-full flex flex-col bg-sand text-ink">
+    <div data-tour="kanban" className="h-full flex flex-col bg-sand text-ink">
       <div
         role="tablist"
         aria-label="Colunas do kanban"
@@ -84,6 +85,7 @@ export function Kanban({ onStartTask }: Readonly<KanbanProps>) {
             column={column}
             active={column.id === activeColumn}
             tasks={tasksState}
+            loading={isLoading}
             index={index + 1}
             updateTask={handleUpdateTask}
             deleteTask={handleDeleteTask}

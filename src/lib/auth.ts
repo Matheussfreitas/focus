@@ -1,14 +1,8 @@
-import { env } from '#/env.ts'
-import { PrismaClient } from '#/generated/prisma/client.ts'
-import { PrismaPg } from '@prisma/adapter-pg'
+import { prisma } from '#/db.ts'
 import bcrypt from 'bcryptjs'
 import { betterAuth } from 'better-auth'
 import { prismaAdapter } from 'better-auth/adapters/prisma'
 import { tanstackStartCookies } from 'better-auth/tanstack-start'
-
-const prisma = new PrismaClient({
-  adapter: new PrismaPg({ connectionString: env.DATABASE_URL }),
-})
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -26,6 +20,11 @@ export const auth = betterAuth({
   },
   session: {
     expiresIn: 60 * 60 * 24,
+    // valida a sessão pelo cookie assinado, sem consultar o banco a cada chamada
+    cookieCache: {
+      enabled: true,
+      maxAge: 5 * 60,
+    },
   },
   plugins: [tanstackStartCookies()],
 })

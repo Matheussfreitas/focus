@@ -1,13 +1,20 @@
 import { createTag, deleteTag, getTags, updateTag } from '#/server/tags/tags.ts'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  queryOptions,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
+
+export const tagsQueryOptions = queryOptions({
+  queryKey: ['tags'],
+  queryFn: () => getTags(),
+})
 
 export function useTagQueries() {
   const queryClient = useQueryClient()
 
-  const { data: tagsState = [], isLoading } = useQuery({
-    queryKey: ['tags'],
-    queryFn: () => getTags(),
-  })
+  const { data: tagsState = [], isLoading } = useQuery(tagsQueryOptions)
 
   const invalidate = () => {
     queryClient.invalidateQueries({ queryKey: ['tags'] })

@@ -119,6 +119,7 @@ export function KanbanCard({
       </div>
       <button
         type="button"
+        data-tour="start-task"
         onClick={() => onStartTask(task)}
         className="ml-auto flex size-12 md:size-8 shrink-0 items-center justify-center cursor-pointer hover:bg-ink/8"
         title="Iniciar no Pomodoro"

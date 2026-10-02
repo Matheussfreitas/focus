@@ -1,6 +1,7 @@
 import { subHours } from 'date-fns'
 import { authClient } from '#/lib/auth-client.ts'
 import { useEffect, useState } from 'react'
+import { startTour } from '#/lib/tour.ts'
 import {
   DEFAULT_PALETTE,
   PALETTES,
@@ -63,7 +64,16 @@ export default function Header() {
 
         <div className="h-full flex items-center gap-1.5 sm:gap-2 ml-auto">
           {/* <BetterAuthHeader /> */}
-          <div className="flex items-center">
+          <button
+            type="button"
+            aria-label="Ver tour guiado"
+            title="Ver tour guiado"
+            onClick={() => void startTour({ loggedIn: !!session?.user })}
+            className="hidden md:flex h-4 w-4 items-center justify-center bg-ink text-sand text-[10px] font-bold geist-mono cursor-pointer"
+          >
+            ?
+          </button>
+          <div className="flex items-center" data-tour="palette">
             {PALETTES.map((item) => {
               const selected = palette === item.id
               return (
@@ -76,9 +86,7 @@ export default function Header() {
                   onClick={() => handleSelectPalette(item.id)}
                   className={`flex items-center justify-center cursor-pointer h-4 w-4 ${item.swatch}`}
                 >
-                  {selected && (
-                    <span className="h-3 w-3 border border-cream" />
-                  )}
+                  {selected && <span className="h-3 w-3 border border-cream" />}
                 </button>
               )
             })}

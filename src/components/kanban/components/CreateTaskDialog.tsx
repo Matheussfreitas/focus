@@ -81,6 +81,7 @@ export function CreateTaskDialog({
       <DialogTrigger asChild>
         <button
           type="button"
+          data-tour="create-task"
           aria-label="Adicionar tarefa"
           className="ml-2 flex size-11 md:size-6 items-center justify-center hover:text-ink cursor-pointer"
         >
