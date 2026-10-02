@@ -1,4 +1,9 @@
-import { createTask, getTasks, updateTask } from '#/server/tasks/tasks.ts'
+import {
+  createTask,
+  deleteTask,
+  getTasks,
+  updateTask,
+} from '#/server/tasks/tasks.ts'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { Task } from './types/task.type'
 
@@ -45,5 +50,33 @@ export function useTaskQueries() {
     },
   })
 
-  return { tasksState, isLoading, createTaskMutation, updateTaskMutation }
+  const deleteTaskMutation = useMutation({
+    mutationFn: deleteTask,
+    onMutate: async (variables) => {
+      await queryClient.cancelQueries({ queryKey: ['tasks'] })
+      const previousTasks = queryClient.getQueryData<Task[]>(['tasks'])
+
+      queryClient.setQueryData<Task[]>(['tasks'], (old) =>
+        (old ?? []).filter((task) => task.id !== variables.data.id),
+      )
+
+      return { previousTasks }
+    },
+    onError: (_err, _variables, context) => {
+      if (context?.previousTasks) {
+        queryClient.setQueryData(['tasks'], context.previousTasks)
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['tasks'] })
+    },
+  })
+
+  return {
+    tasksState,
+    isLoading,
+    createTaskMutation,
+    updateTaskMutation,
+    deleteTaskMutation,
+  }
 }

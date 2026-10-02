@@ -1,9 +1,4 @@
-import {
-  createTag,
-  deleteTag,
-  getTags,
-  updateTag,
-} from '#/server/tags/tags.ts'
+import { createTag, deleteTag, getTags, updateTag } from '#/server/tags/tags.ts'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 export function useTagQueries() {

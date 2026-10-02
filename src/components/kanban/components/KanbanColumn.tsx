@@ -1,14 +1,16 @@
 import { useState } from 'react'
 import { CreateTaskDialog } from './CreateTaskDialog'
 import { KanbanCard } from './KanbanCard'
-import type { Column } from './types/column.type'
-import type { Task } from './types/task.type'
+import type { Column } from '../types/column.type'
+import type { Task } from '../types/task.type'
 
 interface KanbanColumnProps {
   column: Column
+  active: boolean
   tasks: Task[]
   index: number
   updateTask: (task: Task) => void
+  deleteTask: (task: Task) => Promise<void>
   onCreateTask: (data: {
     title: string
     description?: string
@@ -21,9 +23,11 @@ interface KanbanColumnProps {
 
 export function KanbanColumn({
   column,
+  active,
   tasks,
   index,
   updateTask,
+  deleteTask,
   onCreateTask,
   onStartTask,
 }: Readonly<KanbanColumnProps>) {
@@ -38,11 +42,14 @@ export function KanbanColumn({
 
   const filterTasksByColumn = tasks.filter((task) => task.status === column.id)
 
-  const dragBackgroundColor = `${isOver ? 'bg-[rgba(17,26,43,.16)]' : ''}`
+  const dragBackgroundColor = `${isOver ? 'bg-ink/16' : ''}`
 
   return (
     <div
-      className={`h-full flex-1 flex flex-col border geist-mono ${dragBackgroundColor}`}
+      role="tabpanel"
+      id={`panel-${column.id}`}
+      aria-label={column.title}
+      className={`${active ? 'flex' : 'hidden'} md:flex h-full min-h-0 flex-1 flex-col border geist-mono ${dragBackgroundColor}`}
       onDragEnter={() => setIsOver(true)}
       onDragLeave={() => setIsOver(false)}
       onDrop={(e) => {
@@ -57,29 +64,32 @@ export function KanbanColumn({
       }}
       onDragOver={(e) => {
         e.preventDefault()
-        console.log(`Drag over em ${column.title}`)
       }}
     >
       <div
-        className={`flex justify-between bg-[#EDE7DC] p-2 items-center text-sm text-[#5D5344] border-y-2 border-[#131A26] ${dragBackgroundColor}`}
+        className={`flex justify-between bg-sand p-2 items-center text-base md:text-sm text-ink-muted border-y-2 border-ink ${dragBackgroundColor}`}
       >
         <span className="flex gap-2 items-center">
           <p>{format(index)}</p>
-          <p className="font-bold text-[#131A26]">
-            {column.title.toUpperCase()}
-          </p>
+          <p className="font-bold text-ink">{column.title.toUpperCase()}</p>
         </span>
         <span className="flex gap-2 items-center">
           <p>{filterTasksByColumn.length}</p>
           <CreateTaskDialog status={column.id} onCreate={onCreateTask} />
         </span>
       </div>
-      <div>
+      <div className="flex-1 min-h-0 overflow-y-auto">
+        {filterTasksByColumn.length === 0 && (
+          <p className="p-4 text-sm text-center text-ink-muted">
+            Nenhuma tarefa.
+          </p>
+        )}
         {filterTasksByColumn.map((task) => (
           <KanbanCard
             key={task.id}
             task={task}
             onToggleDone={updateTask}
+            onDelete={deleteTask}
             onStartTask={onStartTask}
           />
         ))}

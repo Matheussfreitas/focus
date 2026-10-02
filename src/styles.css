@@ -20,113 +20,108 @@ body {
   font-family: 'Schibsted Grotesk', sans-serif;
 }
 
-/* Haute Patisserie Dark Theme */
+/* ---------- Paleta do Focus (única fonte de cores do site) ----------
+   @theme (sem "inline"): os utilitários emitem var(--color-*), então os
+   tokens podem ser trocados em runtime via [data-palette]. */
+
+@theme static {
+  /* Cores fixas das paletas (bolinhas do header e tags) */
+  --color-palette-ocean: #1d396e;
+  --color-palette-midnight: #111a2b;
+  --color-palette-green: #17453a;
+  --color-palette-orange: #6b3a1e;
+  --color-palette-pink: #5a1f33;
+
+  /* Tinta (azul principal) e tons de texto — trocáveis pela paleta */
+  --color-ink: #111a2b;
+  --color-ink-hover: #122032;
+  --color-ink-muted: #5d5344;
+  --color-ink-soft: #49473d;
+
+  /* Timer — trocável pela paleta */
+  --color-ocean: var(--color-palette-ocean);
+  --color-cream: #f0ebe1;
+
+  /* Areia (superfícies claras) */
+  --color-sand: #ede7dc;
+  --color-sand-dark: #cbc6ba;
+  --color-sand-darker: #bab5a9;
+  --color-sand-gray: #cecbc5;
+  --color-field: #ffffff;
+
+  /* Estados e destaques */
+  --color-danger: #b91c1c;
+  --color-danger-hover: #991b1b;
+  --color-success: #22c55e;
+  --color-signal: #f59e0b;
+  --color-scrim: rgb(0 0 0 / 0.5);
+
+  /* Cores das tags (não mudam com a paleta) */
+  --color-tag-red: #7e2020;
+  --color-tag-orange: var(--color-palette-orange);
+  --color-tag-yellow: #8a6d1d;
+  --color-tag-green: var(--color-palette-green);
+  --color-tag-blue: #1d396e;
+  --color-tag-purple: #4b2e6b;
+  --color-tag-pink: var(--color-palette-pink);
+  --color-tag-brown: #4a3728;
+  --color-tag-gray: #5d5344;
+}
+
+/* Paleta ativa: define data-palette no <html> (ver src/lib/palette.ts).
+   A paleta "ocean" é o padrão e não precisa de bloco. */
+[data-palette='midnight'] {
+  --color-ocean: #111a2b;
+  --color-ink: #070d18;
+  --color-ink-hover: #0a1220;
+}
+
+[data-palette='green'] {
+  --color-ocean: #17453a;
+  --color-ink: #0f2a23;
+  --color-ink-hover: #11322a;
+}
+
+[data-palette='orange'] {
+  --color-ocean: #6b3a1e;
+  --color-ink: #3f2210;
+  --color-ink-hover: #4a2813;
+}
+
+[data-palette='pink'] {
+  --color-ocean: #5a1f33;
+  --color-ink: #361220;
+  --color-ink-hover: #411626;
+}
+
+/* Aliases usados pelos componentes shadcn (components/ui/*) */
 :root {
-  /* Core colors - Dark elegant bakery */
-  --background: oklch(0.13 0.01 60);
-  --foreground: oklch(0.93 0.02 85);
-
-  /* Warm cream for cards */
-  --card: oklch(0.17 0.015 55);
-  --card-foreground: oklch(0.93 0.02 85);
-
-  /* Copper accent */
-  --primary: oklch(0.65 0.14 55);
-  --primary-foreground: oklch(0.13 0.01 60);
-
-  /* Antique gold */
-  --secondary: oklch(0.72 0.12 85);
-  --secondary-foreground: oklch(0.13 0.01 60);
-
-  /* Muted warm tones */
-  --muted: oklch(0.22 0.02 55);
-  --muted-foreground: oklch(0.65 0.03 85);
-
-  /* Accent - rich copper */
-  --accent: oklch(0.55 0.15 45);
-  --accent-foreground: oklch(0.95 0.02 85);
-
-  /* Destructive */
-  --destructive: oklch(0.55 0.2 25);
-  --destructive-foreground: oklch(0.95 0.02 85);
-
-  /* Borders and inputs */
-  --border: oklch(0.28 0.03 55);
-  --input: oklch(0.22 0.02 55);
-  --ring: oklch(0.65 0.14 55);
-
-  /* Chart colors - pastry inspired */
-  --chart-1: oklch(0.65 0.14 55);
-  --chart-2: oklch(0.72 0.12 85);
-  --chart-3: oklch(0.55 0.15 45);
-  --chart-4: oklch(0.6 0.1 30);
-  --chart-5: oklch(0.5 0.08 150);
-
   --radius: 0.625rem;
-
-  /* Popover */
-  --popover: oklch(0.17 0.015 55);
-  --popover-foreground: oklch(0.93 0.02 85);
-
-  /* Sidebar */
-  --sidebar: oklch(0.15 0.01 55);
-  --sidebar-foreground: oklch(0.93 0.02 85);
-  --sidebar-primary: oklch(0.65 0.14 55);
-  --sidebar-primary-foreground: oklch(0.95 0.02 85);
-  --sidebar-accent: oklch(0.22 0.02 55);
-  --sidebar-accent-foreground: oklch(0.93 0.02 85);
-  --sidebar-border: oklch(0.28 0.03 55);
-  --sidebar-ring: oklch(0.65 0.14 55);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
+  --color-background: var(--color-sand);
+  --color-foreground: var(--color-ink);
+  --color-card: var(--color-sand);
+  --color-card-foreground: var(--color-ink);
+  --color-popover: var(--color-sand);
+  --color-popover-foreground: var(--color-ink);
+  --color-primary: var(--color-ink);
+  --color-primary-foreground: var(--color-sand);
+  --color-secondary: var(--color-sand-dark);
+  --color-secondary-foreground: var(--color-ink);
+  --color-accent: var(--color-sand-dark);
+  --color-accent-foreground: var(--color-ink);
+  --color-destructive: var(--color-danger);
+  --color-muted-foreground: var(--color-ink-muted);
+  --color-border: var(--color-ink-soft);
+  --color-input: var(--color-ink-soft);
+  --color-ring: var(--color-ink);
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
-
-  /* Custom colors for the theme */
-  --color-copper: oklch(0.65 0.14 55);
-  --color-copper-light: oklch(0.75 0.12 55);
-  --color-copper-dark: oklch(0.5 0.15 50);
-  --color-gold: oklch(0.72 0.12 85);
-  --color-gold-light: oklch(0.82 0.1 85);
-  --color-cream: oklch(0.93 0.02 85);
-  --color-cream-dark: oklch(0.85 0.03 80);
-  --color-charcoal: oklch(0.13 0.01 60);
-  --color-charcoal-light: oklch(0.2 0.015 55);
 }
 
 @layer base {
@@ -137,48 +132,82 @@ body {
     @apply bg-background text-foreground;
   }
 }
-/* Elegant grain texture overlay */
-.grain-texture {
-  position: relative;
+
+/* ---------- Classes reutilizáveis do site ----------
+   Ficam fora de @layer de propósito: precisam vencer as variantes
+   do shadcn (ex.: bg-primary do Button) sem depender do twMerge. */
+
+/* Tipografia */
+.label-mono {
+  @apply text-xs uppercase tracking-wide text-ink-muted;
+  font-family: 'Geist Mono', monospace;
 }
 
-.grain-texture::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
-  pointer-events: none;
-  opacity: 0.4;
+.text-meta {
+  @apply text-xs text-ink-muted;
+  font-family: 'Geist Mono', monospace;
 }
 
-/* Golden border accent */
-.border-gold-accent {
-  border-image: linear-gradient(
-      135deg,
-      oklch(0.72 0.12 85),
-      oklch(0.65 0.14 55),
-      oklch(0.72 0.12 85)
-    )
-    1;
+.text-error {
+  @apply text-xs text-danger;
 }
 
-/* Copper glow effect */
-.glow-copper {
-  box-shadow:
-    0 0 20px oklch(0.65 0.14 55 / 0.3),
-    0 0 40px oklch(0.65 0.14 55 / 0.1);
+/* Campos */
+.input-field {
+  @apply border-ink/30 bg-field text-ink placeholder:text-ink-muted focus-visible:border-ink focus-visible:ring-ink/30;
 }
 
-/* Elegant card hover effect */
-.card-hover {
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
+.input-soft {
+  @apply rounded-none border-transparent bg-sand-gray/50 text-ink placeholder:text-ink-soft/70 focus-visible:bg-sand-gray focus-visible:ring-ink/30;
 }
 
-.card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow:
-    0 12px 40px oklch(0 0 0 / 0.4),
-    0 0 20px oklch(0.65 0.14 55 / 0.15);
+/* Botões */
+.btn-primary,
+.btn-danger,
+.btn-outline-ink,
+.btn-outline-danger {
+  @apply rounded-none text-xs uppercase tracking-widest cursor-pointer;
+  font-family: 'Geist Mono', monospace;
+}
+
+.btn-primary {
+  @apply bg-ink text-sand hover:bg-ink/90;
+}
+
+.btn-danger {
+  @apply bg-danger text-white hover:bg-danger-hover disabled:opacity-40;
+}
+
+.btn-outline-ink {
+  @apply border border-ink bg-transparent text-ink hover:bg-ink/10;
+}
+
+.btn-outline-danger {
+  @apply border border-danger bg-transparent text-danger hover:bg-danger/10 hover:text-danger;
+}
+
+/* Diálogos */
+.dialog-surface {
+  @apply rounded-none border-2 border-ink bg-sand p-6 text-ink shadow-none;
+}
+
+.dialog-surface-flat {
+  @apply rounded-none border-0 bg-sand p-6 text-ink shadow-none;
+}
+
+.dialog-header {
+  @apply flex items-center gap-2 pb-3;
+}
+
+.dialog-header-bordered {
+  @apply border-b-2 border-ink;
+}
+
+.dialog-title {
+  @apply text-sm font-bold uppercase tracking-widest text-ink;
+  font-family: 'Geist Mono', monospace;
+}
+
+.dialog-close {
+  @apply ml-auto flex size-8 cursor-pointer items-center justify-center hover:bg-ink/10;
 }

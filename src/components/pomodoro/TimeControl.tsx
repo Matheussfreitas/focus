@@ -15,14 +15,22 @@ export function TimeControl({
   handleMoreDuration,
 }: TimeControlProps) {
   return (
-    <div className="flex items-center text-xs text-[rgba(240,235,225,.62)]">
+    <div className="flex items-center text-xs text-cream/62">
       <p>{title}</p>
       <span className="flex items-center gap-2 ml-2">
-        <Button variant="ghost" onClick={handleLessDuration}>
+        <Button
+          variant="ghost"
+          className="hover:text-cream"
+          onClick={handleLessDuration}
+        >
           <FiMinus />
         </Button>
         <p className="text-lg">{duracao / 60 / 1000}</p>
-        <Button variant="ghost" onClick={handleMoreDuration}>
+        <Button
+          variant="ghost"
+          className="hover:text-cream"
+          onClick={handleMoreDuration}
+        >
           <FiPlus />
         </Button>
       </span>

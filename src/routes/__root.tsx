@@ -1,15 +1,15 @@
 import {
-    HeadContent,
-    Scripts,
-    createRootRouteWithContext,
-} from '@tanstack/react-router';
-import Footer from '../components/Footer';
-import Header from '../components/Header';
+  HeadContent,
+  Scripts,
+  createRootRouteWithContext,
+} from '@tanstack/react-router'
+import Footer from '../components/Footer'
+import Header from '../components/Header'
+import { PALETTE_INIT_SCRIPT } from '../lib/palette'
 
+import appCss from '../styles.css?url'
 
-import appCss from '../styles.css?url';
-
-import type { QueryClient } from '@tanstack/react-query';
+import type { QueryClient } from '@tanstack/react-query'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -47,13 +47,12 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <head>
         <link rel="icon" href="/favicon.svg" />
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        <script dangerouslySetInnerHTML={{ __html: PALETTE_INIT_SCRIPT }} />
         <HeadContent />
       </head>
       <body className="h-dvh flex flex-col antialiased wrap-anywhere">
         <Header />
-        <main className="flex-1">
-          {children}
-        </main>
+        <main className="flex-1 min-h-0">{children}</main>
         {/* <Footer /> */}
         <Scripts />
       </body>

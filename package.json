@@ -8,7 +8,7 @@
   },
   "scripts": {
     "postinstall": "dotenv -e .env -- prisma generate",
-    "dev": "vite dev --port 3000",
+    "dev": "dotenv -e .env.dev -- vite dev --port 3000",
     "generate-routes": "tsr generate",
     "build": "prisma generate && vite build",
     "preview": "vite preview",

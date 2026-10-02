@@ -1,15 +1,15 @@
 import { TagsColor } from '#/generated/prisma/enums.ts'
 
 export const TAG_COLOR_HEX: Record<TagsColor, string> = {
-  [TagsColor.RED]: '#7E2020',
-  [TagsColor.GREEN]: '#17453A',
-  [TagsColor.BLUE]: '#1D396E',
-  [TagsColor.YELLOW]: '#8A6D1D',
-  [TagsColor.ORANGE]: '#6B3A1E',
-  [TagsColor.PURPLE]: '#4B2E6B',
-  [TagsColor.PINK]: '#5A1F33',
-  [TagsColor.BROWN]: '#4A3728',
-  [TagsColor.GRAY]: '#5D5344',
+  [TagsColor.RED]: 'var(--color-tag-red)',
+  [TagsColor.GREEN]: 'var(--color-tag-green)',
+  [TagsColor.BLUE]: 'var(--color-tag-blue)',
+  [TagsColor.YELLOW]: 'var(--color-tag-yellow)',
+  [TagsColor.ORANGE]: 'var(--color-tag-orange)',
+  [TagsColor.PURPLE]: 'var(--color-tag-purple)',
+  [TagsColor.PINK]: 'var(--color-tag-pink)',
+  [TagsColor.BROWN]: 'var(--color-tag-brown)',
+  [TagsColor.GRAY]: 'var(--color-tag-gray)',
 }
 
 export const TAG_COLOR_ORDER: TagsColor[] = [
