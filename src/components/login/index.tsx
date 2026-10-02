@@ -50,7 +50,6 @@ export function Login() {
   })
 
   const onLogin = async (data: SchemaFormData) => {
-    console.log('Login data:', data)
     await authClient.signIn.email({
       email: data.email,
       password: data.password,
@@ -59,7 +58,6 @@ export function Login() {
   }
 
   const onRegister = async (data: SchemaFormData) => {
-    console.log('Register data:', data)
     await authClient.signUp.email({
       name: data.name || '',
       email: data.email,
