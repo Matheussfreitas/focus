@@ -203,8 +203,8 @@ export function Pomodoro({ activeTask }: Readonly<PomodoroProps>) {
         </div>
       </div>
 
-      <div className="w-full h-15 flex items-center justify-center border-t-2 border-cream/24 geist-mono">
-        <div className="flex gap-8">
+      <div className="w-full py-3 md:py-0 md:h-15 flex items-center justify-center border-t-2 border-cream/24 geist-mono">
+        <div className="grid w-full grid-cols-3 gap-1 px-2 md:flex md:w-auto md:gap-8 md:px-0">
           {mapTimeControls.map((control) => (
             <TimeControl
               key={control.title}

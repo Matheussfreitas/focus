@@ -15,23 +15,27 @@ export function TimeControl({
   handleMoreDuration,
 }: TimeControlProps) {
   return (
-    <div className="flex items-center text-xs text-cream/62">
+    <div className="flex flex-col items-center gap-1 text-sm md:flex-row md:gap-0 md:text-xs text-cream/62">
       <p>{title}</p>
-      <span className="flex items-center gap-2 ml-2">
+      <span className="flex items-center gap-1 md:gap-2 md:ml-2">
         <Button
           variant="ghost"
-          className="hover:text-cream"
+          className="size-11 px-0 md:size-auto md:px-4 hover:text-cream"
+          aria-label={`Diminuir ${title.toLowerCase()}`}
           onClick={handleLessDuration}
         >
-          <FiMinus />
+          <FiMinus aria-hidden />
         </Button>
-        <p className="text-lg">{duracao / 60 / 1000}</p>
+        <p className="min-w-6 text-center text-xl md:text-lg">
+          {duracao / 60 / 1000}
+        </p>
         <Button
           variant="ghost"
-          className="hover:text-cream"
+          className="size-11 px-0 md:size-auto md:px-4 hover:text-cream"
+          aria-label={`Aumentar ${title.toLowerCase()}`}
           onClick={handleMoreDuration}
         >
-          <FiPlus />
+          <FiPlus aria-hidden />
         </Button>
       </span>
     </div>
