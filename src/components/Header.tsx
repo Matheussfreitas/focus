@@ -1,4 +1,3 @@
-import { subHours } from 'date-fns'
 import { authClient } from '#/lib/auth-client.ts'
 import { useEffect, useState } from 'react'
 import { startTour } from '#/lib/tour.ts'
@@ -22,8 +21,12 @@ import { Login } from './login'
 export default function Header() {
   const { data: session, isPending } = authClient.useSession()
 
-  const day = subHours(new Date(), 3).getDate()
-  const month = new Date().getMonth()
+  const today = new Date(
+    new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }),
+  )
+  const weekDay = today.getDay()
+  const day = today.getDate()
+  const month = today.getMonth()
   const daysOfWeek = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB']
   const monthsOfYear = [
     'JAN',
@@ -58,7 +61,7 @@ export default function Header() {
           <p className="font-bold text-ink">FOCUS</p>
           <div className="h-full w-0.5 bg-ink" />
           <p className="text-xs text-ink-muted geist-mono">
-            {daysOfWeek[day]} {day} {monthsOfYear[month]}
+            {daysOfWeek[weekDay]} {day} {monthsOfYear[month]}
           </p>
         </div>
 
