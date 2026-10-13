@@ -21,6 +21,8 @@ export function KanbanCard({
   onStartTask,
 }: KanbanCardProps) {
   const [editOpen, setEditOpen] = useState(false)
+  // tarefa concluída não volta para o timer
+  const isDone = task.status === TaskStatus.DONE
 
   const formatDate = (date: Date) => {
     if (date.getDate() === new Date().getDate()) {
@@ -119,11 +121,16 @@ export function KanbanCard({
       </div>
       <button
         type="button"
-        data-tour="start-task"
+        data-tour={isDone ? undefined : 'start-task'}
         onClick={() => onStartTask(task)}
-        className="ml-auto flex size-12 md:size-8 shrink-0 items-center justify-center cursor-pointer hover:bg-ink/8"
-        title="Iniciar no Pomodoro"
-        aria-label={`Iniciar ${task.title} no Pomodoro`}
+        disabled={isDone}
+        className="ml-auto flex size-12 md:size-8 shrink-0 items-center justify-center cursor-pointer hover:bg-ink/8 disabled:cursor-not-allowed disabled:opacity-24 disabled:hover:bg-transparent"
+        title={isDone ? 'Tarefa concluída' : 'Iniciar no Pomodoro'}
+        aria-label={
+          isDone
+            ? `${task.title} já foi concluída`
+            : `Iniciar ${task.title} no Pomodoro`
+        }
       >
         <BiSolidRightArrow className="size-5 md:size-3 text-ink" />
       </button>

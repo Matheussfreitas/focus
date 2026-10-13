@@ -1,13 +1,8 @@
-import { authClient } from '#/lib/auth-client.ts'
-import { useEffect, useState } from 'react'
+import { authClient, useSession } from '#/lib/auth-client.ts'
 import { startTour } from '#/lib/tour.ts'
-import {
-  DEFAULT_PALETTE,
-  PALETTES,
-  getPalette,
-  setPalette,
-} from '#/lib/palette.ts'
-import type { PaletteId } from '#/lib/palette.ts'
+import { PALETTES } from '#/lib/palette.ts'
+import { LAYOUTS, resolveLayout } from '#/lib/layout.ts'
+import { usePreferences } from '#/lib/preferences.tsx'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,7 +14,7 @@ import {
 import { Login } from './login'
 
 export default function Header() {
-  const { data: session, isPending } = authClient.useSession()
+  const { data: session, isPending } = useSession()
 
   const today = new Date(
     new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }),
@@ -43,16 +38,9 @@ export default function Header() {
     'DEZ',
   ]
 
-  const [palette, setPaletteState] = useState<PaletteId>(DEFAULT_PALETTE)
-
-  useEffect(() => {
-    setPaletteState(getPalette())
-  }, [])
-
-  const handleSelectPalette = (id: PaletteId) => {
-    setPalette(id)
-    setPaletteState(id)
-  }
+  const { palette, setPalette, layout, setLayout } = usePreferences()
+  const loggedIn = !!session?.user
+  const activeLayout = resolveLayout(layout, loggedIn)
 
   return (
     <header className="top-0 z-50 bg-sand px-4 h-10">
@@ -71,11 +59,37 @@ export default function Header() {
             type="button"
             aria-label="Ver tour guiado"
             title="Ver tour guiado"
-            onClick={() => void startTour({ loggedIn: !!session?.user })}
+            onClick={() => void startTour({ loggedIn })}
             className="hidden md:flex h-4 w-4 items-center justify-center bg-ink text-sand text-[10px] font-bold geist-mono cursor-pointer"
           >
             ?
           </button>
+          <div className="flex items-center gap-0.5" data-tour="layout">
+            {LAYOUTS.map((item) => {
+              const selected = activeLayout === item.id
+              const disabled = item.requiresAuth && !loggedIn
+              const Icon = item.icon
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  aria-label={`Layout ${item.label}`}
+                  aria-pressed={selected}
+                  title={
+                    disabled ? `${item.label} (entre para usar)` : item.label
+                  }
+                  disabled={disabled}
+                  onClick={() => setLayout(item.id)}
+                  className={`flex items-center justify-center h-5 w-5 cursor-pointer disabled:cursor-not-allowed disabled:opacity-30 ${
+                    selected ? 'bg-ink text-sand' : 'text-ink'
+                  }`}
+                >
+                  <Icon className="h-3 w-3" />
+                </button>
+              )
+            })}
+          </div>
+          <div className="h-full w-0.5 bg-ink" />
           <div className="flex items-center" data-tour="palette">
             {PALETTES.map((item) => {
               const selected = palette === item.id
@@ -86,7 +100,7 @@ export default function Header() {
                   aria-label={`Paleta ${item.label}`}
                   aria-pressed={selected}
                   title={item.label}
-                  onClick={() => handleSelectPalette(item.id)}
+                  onClick={() => setPalette(item.id)}
                   className={`flex items-center justify-center cursor-pointer h-4 w-4 ${item.swatch}`}
                 >
                   {selected && <span className="h-3 w-3 border border-cream" />}

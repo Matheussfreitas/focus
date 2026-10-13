@@ -1,0 +1,15 @@
+# Postgres para desenvolvimento local (npm run dev:db)
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: focus_dev
+    ports:
+      - '5433:5432'
+    volumes:
+      - focus-db:/var/lib/postgresql/data
+
+volumes:
+  focus-db:

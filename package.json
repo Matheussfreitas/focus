@@ -9,6 +9,7 @@
   "scripts": {
     "postinstall": "dotenv -e .env -- prisma generate",
     "dev": "dotenv -e .env.dev -- vite dev --port 3000",
+    "dev:db": "docker compose up -d --wait && dotenv -e .env.dev -- prisma migrate deploy && dotenv -e .env.dev -- prisma db seed",
     "generate-routes": "tsr generate",
     "build": "prisma generate && vite build",
     "preview": "vite preview",

@@ -99,6 +99,17 @@ const PALETTE_STEP: DriveStep = {
   },
 }
 
+const LAYOUT_STEP: DriveStep = {
+  element: '[data-tour="layout"]',
+  popover: {
+    title: 'Monte sua tela',
+    description:
+      'Use timer e tarefas lado a lado ou só um deles. Com só as tarefas, o timer vira uma janela flutuante.',
+    side: 'bottom',
+    align: 'end',
+  },
+}
+
 const KANBAN_STEPS: DriveStep[] = [
   {
     element: '[data-tour="kanban"]',
@@ -153,7 +164,7 @@ function buildSteps(sections: Section[], loggedIn: boolean): DriveStep[] {
   }
   if (sections.includes('general')) {
     if (!loggedIn) steps.push(LOGIN_STEP)
-    steps.push(PALETTE_STEP)
+    steps.push(LAYOUT_STEP, PALETTE_STEP)
   }
 
   // Ignora passos cujo elemento não está na tela (ex.: nenhuma tarefa criada ainda).
