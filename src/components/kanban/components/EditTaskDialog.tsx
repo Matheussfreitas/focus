@@ -110,6 +110,9 @@ export function EditTaskDialog({
             setValue={setValue}
             errors={errors}
             selectedTagId={watch('tagId')}
+            dueDate={watch('dueDate')}
+            title={watch('title')}
+            description={watch('description')}
           />
           {submitError && <p className="text-error">{submitError}</p>}
           <div className="grid grid-cols-2 gap-2">

@@ -1,9 +1,16 @@
 import { useState } from 'react'
 import { BiSolidRightArrow } from 'react-icons/bi'
+import { FiAlertCircle } from 'react-icons/fi'
 import { TaskStatus } from '#/generated/prisma/enums.ts'
 import { Checkbox } from '../../ui/checkbox'
 import { EditTaskDialog } from './EditTaskDialog'
 import { TAG_COLOR_HEX } from '../tagColors'
+import {
+  formatDueLabel,
+  getDueStatus,
+  getOverdueDays,
+  isTaskOverdue,
+} from '../dueDate'
 import type { Task } from '../types/task.type'
 
 // bg-sand
@@ -24,19 +31,8 @@ export function KanbanCard({
   // tarefa concluída não volta para o timer
   const isDone = task.status === TaskStatus.DONE
 
-  const formatDate = (date: Date) => {
-    if (date.getDate() === new Date().getDate()) {
-      return 'Hoje'
-    }
-    if (date.getDate() === new Date().getDate() + 1) {
-      return 'Amanhã'
-    }
-    const day = date.getDate().toString().padStart(2, '0')
-    const month = (date.getMonth() + 1).toString().padStart(2, '0')
-    const year = date.getFullYear()
-
-    return `${day}/${month}/${year}`
-  }
+  const overdue = isTaskOverdue(task)
+  const overdueDays = getOverdueDays(task.dueDate)
 
   const formatTaskStatus = (status: string) => {
     switch (status) {
@@ -53,7 +49,7 @@ export function KanbanCard({
 
   return (
     <div
-      className="flex items-center gap-2 min-h-28 md:min-h-24 p-3 md:p-2 schibsted-grotesk text-sm md:text-xs font-medium border-l-3 border-ocean border-b border-b-ink/16 hover:cursor-grab"
+      className={`flex items-center gap-2 min-h-28 md:min-h-24 p-3 md:p-2 schibsted-grotesk text-sm md:text-xs font-medium border-l-3 ${overdue ? 'border-danger' : 'border-ocean'} border-b border-b-ink/16 hover:cursor-grab`}
       draggable={true}
       onDragStart={(e) => {
         e.dataTransfer.setData('text/plain', task.id)
@@ -105,18 +101,26 @@ export function KanbanCard({
               </span>
             </span>
           )}
-          {task.dueDate && (
-            <p
-              style={{
-                color:
-                  formatDate(task.dueDate) === 'Hoje'
-                    ? 'var(--color-tag-red)'
-                    : 'var(--color-ink-muted)',
-              }}
-            >
-              {formatDate(task.dueDate)}
-            </p>
-          )}
+          {task.dueDate &&
+            (overdue ? (
+              <p
+                className="ml-auto flex items-center gap-1 font-bold text-danger geist-mono"
+                aria-label={`Atrasada há ${overdueDays} ${overdueDays === 1 ? 'dia' : 'dias'}`}
+              >
+                <FiAlertCircle aria-hidden className="shrink-0" />
+                ATRASADA · {overdueDays}d
+              </p>
+            ) : (
+              <p
+                className={`ml-auto ${
+                  getDueStatus(task.dueDate) === 'today'
+                    ? 'text-tag-red'
+                    : 'text-ink-muted'
+                }`}
+              >
+                {formatDueLabel(task.dueDate)}
+              </p>
+            ))}
         </div>
       </div>
       <button

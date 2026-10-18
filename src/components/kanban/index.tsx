@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { TaskStatus } from '#/generated/prisma/enums.ts'
 import { KanbanColumn } from './components/KanbanColumn'
+import { isTaskOverdue } from './dueDate'
 import type { Task } from './types/task.type'
 import { useTaskQueries } from './queries.task'
 
@@ -59,7 +60,9 @@ export function Kanban({ onStartTask }: Readonly<KanbanProps>) {
       >
         {columns.map((column) => {
           const selected = column.id === activeColumn
-          const count = tasksState.filter((t) => t.status === column.id).length
+          const columnTasks = tasksState.filter((t) => t.status === column.id)
+          const count = columnTasks.length
+          const hasOverdue = columnTasks.some(isTaskOverdue)
           return (
             <button
               key={column.id}
@@ -74,6 +77,13 @@ export function Kanban({ onStartTask }: Readonly<KanbanProps>) {
               }`}
             >
               {column.title.toUpperCase()} ({count})
+              {hasOverdue && (
+                <span
+                  role="img"
+                  aria-label="Há tarefas em atraso"
+                  className="ml-1 inline-block h-2 w-2 bg-danger align-middle"
+                />
+              )}
             </button>
           )
         })}

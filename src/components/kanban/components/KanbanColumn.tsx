@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { CreateTaskDialog } from './CreateTaskDialog'
+import { FiAlertCircle } from 'react-icons/fi'
 import { KanbanCard } from './KanbanCard'
+import { isTaskOverdue } from '../dueDate'
 import type { Column } from '../types/column.type'
 import type { Task } from '../types/task.type'
 
@@ -42,7 +44,19 @@ export function KanbanColumn({
     return i.toString()
   }
 
-  const filterTasksByColumn = tasks.filter((task) => task.status === column.id)
+  // atrasadas primeiro, as mais antigas no topo; sort estável mantém o resto
+  const filterTasksByColumn = tasks
+    .filter((task) => task.status === column.id)
+    .sort((a, b) => {
+      const aOverdue = isTaskOverdue(a)
+      const bOverdue = isTaskOverdue(b)
+      if (aOverdue !== bOverdue) return aOverdue ? -1 : 1
+      if (aOverdue && a.dueDate && b.dueDate) {
+        return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
+      }
+      return 0
+    })
+  const overdueCount = filterTasksByColumn.filter(isTaskOverdue).length
 
   const dragBackgroundColor = `${isOver ? 'bg-ink/16' : ''}`
 
@@ -51,7 +65,7 @@ export function KanbanColumn({
       role="tabpanel"
       id={`panel-${column.id}`}
       aria-label={column.title}
-      className={`${active ? 'flex' : 'hidden'} lg:flex h-full min-w-0 min-h-0 flex-1 flex-col border geist-mono ${dragBackgroundColor}`}
+      className={`${active ? 'flex' : 'hidden'} lg:flex h-full min-w-0 min-h-0 flex-1 flex-col border geist-mono @container ${dragBackgroundColor}`}
       onDragEnter={() => setIsOver(true)}
       onDragLeave={() => setIsOver(false)}
       onDrop={(e) => {
@@ -74,6 +88,19 @@ export function KanbanColumn({
         <span className="flex gap-2 items-center">
           <p>{format(index)}</p>
           <p className="font-bold text-ink">{column.title.toUpperCase()}</p>
+          {overdueCount > 0 && (
+            <span
+              title={`${overdueCount} ${overdueCount === 1 ? 'tarefa' : 'tarefas'} em atraso`}
+              aria-label={`${overdueCount} em atraso`}
+              className="flex items-center gap-1 bg-danger px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-sand"
+            >
+              <FiAlertCircle aria-hidden />
+              {overdueCount}
+              <span className="hidden @md:inline">
+                {overdueCount === 1 ? 'atrasada' : 'atrasadas'}
+              </span>
+            </span>
+          )}
         </span>
         <span className="flex gap-2 items-center">
           <p>{filterTasksByColumn.length}</p>

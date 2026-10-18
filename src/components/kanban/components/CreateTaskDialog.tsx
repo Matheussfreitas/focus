@@ -105,6 +105,9 @@ export function CreateTaskDialog({
             setValue={setValue}
             errors={errors}
             selectedTagId={selectedTagId}
+            dueDate={watch('dueDate')}
+            title={watch('title')}
+            description={watch('description')}
           />
           {submitError && <p className="text-error">{submitError}</p>}
           <Button size="sm" variant="default" className="btn-primary w-full">
