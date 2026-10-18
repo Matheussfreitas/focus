@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { playCycleComplete, playPhaseEnd, unlockAudio } from './sound'
 
 const DURATION_DEFAULT = 25 * 60 * 1000 // 25 minutos em ms
 const PAUSE_DEFAULT = 5 * 60 * 1000 // 5 minutos em ms
@@ -16,6 +17,10 @@ export function usePomodoro() {
   const [currentPhase, setCurrentPhase] = useState(0)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const alvoRef = useRef<number>(0) // timestamp de quando deve terminar
+  const [cycleCompleted, setCycleCompleted] = useState(false)
+  // O tick roda dentro de um setInterval criado em outra renderização; lê fase
+  // e durações por refs para nunca usar valores velhos.
+  const phaseRef = useRef(0)
 
   const focusFlow = [
     { type: 'focus', duration: duration, title: 'FOCO' },
@@ -25,6 +30,9 @@ export function usePomodoro() {
     { type: 'focus', duration: duration, title: 'FOCO' },
   ]
 
+  const focusFlowRef = useRef(focusFlow)
+  focusFlowRef.current = focusFlow
+
   const currentPhaseData = focusFlow[currentPhase]
   const progress = 1 - restante / currentPhaseData.duration
 
@@ -32,15 +40,37 @@ export function usePomodoro() {
     try {
       const novoRestante = alvoRef.current - Date.now()
       if (novoRestante <= 0) {
-        pararInterval()
-        setRestante(0)
-        setIsRunning(false)
+        handlePhaseEnd()
       } else {
         setRestante(novoRestante)
       }
     } catch (error) {
       console.error('Erro ao atualizar o tempo:', error)
     }
+  }
+
+  function goToPhase(phase: number) {
+    phaseRef.current = phase
+    setCurrentPhase(phase)
+    setRestante(focusFlowRef.current[phase].duration)
+  }
+
+  // Fase terminou: segue sozinho para a próxima. Ao fim da última, volta ao
+  // início pausado e avisa que o ciclo todo foi concluído.
+  function handlePhaseEnd() {
+    const flow = focusFlowRef.current
+    const next = phaseRef.current + 1
+    if (next < flow.length) {
+      playPhaseEnd()
+      goToPhase(next)
+      iniciar(flow[next].duration)
+      return
+    }
+    pararInterval()
+    playCycleComplete()
+    goToPhase(0)
+    setIsRunning(false)
+    setCycleCompleted(true)
   }
 
   function pararInterval() {
@@ -58,6 +88,8 @@ export function usePomodoro() {
   }
 
   function handleStart() {
+    unlockAudio()
+    setCycleCompleted(false)
     iniciar(restante)
   }
 
@@ -75,14 +107,14 @@ export function usePomodoro() {
   function handleNextPhase() {
     pararInterval()
     setIsRunning(false)
-    setCurrentPhase((prev) => (prev + 1) % focusFlow.length)
-    setRestante(focusFlow[(currentPhase + 1) % focusFlow.length].duration)
+    goToPhase((phaseRef.current + 1) % focusFlow.length)
   }
 
   // ao iniciar uma task no Kanban, recomeça o foco do zero
   function startFocus() {
-    setCurrentPhase(0)
-    setRestante(duration)
+    unlockAudio()
+    setCycleCompleted(false)
+    goToPhase(0)
     iniciar(duration)
   }
 
@@ -133,6 +165,13 @@ export function usePomodoro() {
     handleReset,
     handleNextPhase,
     startFocus,
+    cycleCompleted,
+    focusMinutesPerCycle: Math.round(
+      focusFlow
+        .filter((phase) => phase.type === 'focus')
+        .reduce((total, phase) => total + phase.duration, 0) / ONE_MINUTE,
+    ),
+    dismissCelebration: () => setCycleCompleted(false),
   }
 }
 

@@ -10,6 +10,7 @@ import { Kanban } from '../components/kanban'
 import type { Task } from '../components/kanban/types/task.type'
 import { TaskStatus } from '#/generated/prisma/enums.ts'
 import { Pomodoro } from '../components/pomodoro'
+import { CycleCompleteToast } from '../components/pomodoro/CycleCompleteToast'
 import { FloatingPomodoro } from '../components/pomodoro/FloatingPomodoro'
 import { usePomodoro } from '../components/pomodoro/usePomodoro'
 import { getLayoutDef, resolveLayout } from '#/lib/layout.ts'
@@ -210,6 +211,12 @@ function HomePage() {
           </button>
         </nav>
       )}
+
+      <CycleCompleteToast
+        open={pomodoro.cycleCompleted}
+        focusMinutes={pomodoro.focusMinutesPerCycle}
+        onClose={pomodoro.dismissCelebration}
+      />
 
       {!showsPomodoro && (
         <FloatingPomodoro
