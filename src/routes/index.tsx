@@ -16,6 +16,9 @@ import { getLayoutDef, resolveLayout } from '#/lib/layout.ts'
 import type { PanelId } from '#/lib/layout.ts'
 import { usePreferences } from '#/lib/preferences.tsx'
 
+const MIN_POMODORO_PX = 360
+const MIN_KANBAN_PX = 660
+
 export const Route = createFileRoute('/')({
   // Sessão lida no servidor: a página já nasce sabendo se há usuário.
   beforeLoad: async () => ({ session: await getServerSession() }),
@@ -58,8 +61,10 @@ function HomePage() {
       const rect = areaRef.current.getBoundingClientRect()
       const novaRazao = (e.clientX - rect.left) / rect.width
 
-      // Limita a razão entre 26% e 72%
-      setPercentageScreen(Math.min(0.72, Math.max(0.33, novaRazao)))
+      // Garante largura mínima (px) para o timer e para as 3 colunas do kanban
+      const min = MIN_POMODORO_PX / rect.width
+      const max = 1 - MIN_KANBAN_PX / rect.width
+      setPercentageScreen(Math.min(max, Math.max(min, novaRazao)))
     }
 
     const handlePointerUp = () => {
@@ -140,7 +145,7 @@ function HomePage() {
   // No modo dividido, o mobile mostra um painel por vez (abas).
   const mobileHidden = (panel: PanelId) =>
     isSplit && (panel === 'pomodoro') !== (mobileView === 'timer')
-      ? 'hidden md:block'
+      ? 'hidden lg:block'
       : ''
 
   const tabClass = (active: boolean) =>
@@ -149,20 +154,26 @@ function HomePage() {
     }`
 
   return (
-    <div ref={areaRef} className="h-full flex flex-col md:flex-row">
+    <div ref={areaRef} className="h-full flex flex-col lg:flex-row">
       {panels.map((panel, index) => (
         <Fragment key={panel}>
           {index > 0 && (
             <div
               data-tour="divider"
-              className="hidden md:flex w-2.5 cursor-col-resize touch-none bg-ink flex-col justify-center items-center"
+              className="hidden lg:flex w-2.5 cursor-col-resize touch-none bg-ink flex-col justify-center items-center"
               onPointerDown={handlePointerDown}
             >
               <div className="bg-sand h-10 w-0.5 select-none"></div>
             </div>
           )}
           <div
-            className={`min-w-0 min-h-0 flex-1 md:flex-(--grow) ${mobileHidden(panel)}`}
+            className={`min-w-0 min-h-0 flex-1 lg:flex-(--grow) ${
+              isSplit
+                ? panel === 'pomodoro'
+                  ? 'lg:min-w-90'
+                  : 'lg:min-w-165'
+                : ''
+            } ${mobileHidden(panel)}`}
             style={
               {
                 '--grow': isSplit
@@ -179,7 +190,7 @@ function HomePage() {
       {isSplit && (
         <nav
           aria-label="Alternar entre timer e tarefas"
-          className="grid grid-cols-2 bg-ink md:hidden"
+          className="grid grid-cols-2 bg-ink lg:hidden"
         >
           <button
             type="button"

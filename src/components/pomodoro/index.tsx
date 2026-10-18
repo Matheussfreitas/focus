@@ -114,8 +114,8 @@ export function Pomodoro({
   }
 
   return (
-    <div className="h-full w-full flex items-center flex-col bg-ocean">
-      <div className="w-full px-12 mt-4">
+    <div className="@container h-full w-full min-h-0 flex items-center flex-col bg-ocean overflow-y-auto">
+      <div className="w-full px-4 @lg:px-12 mt-4">
         <div className="w-full flex justify-between text-sm text-cream/62 geist-mono">
           <span>{currentPhaseData.title}</span>
           <span>
@@ -124,14 +124,14 @@ export function Pomodoro({
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col justify-center items-center gap-4">
+      <div className="flex-1 w-full min-w-0 flex flex-col justify-center items-center gap-4 px-4">
         <div
           data-tour="timer"
-          className="h-75 w-78 rounded-[35%] flex justify-center items-center flex-col gap-4 bg-cream/24"
+          className="aspect-square h-[min(18.75rem,100cqw,40cqh)] max-h-full rounded-[35%] flex justify-center items-center flex-col gap-4 bg-cream/24"
           style={{ background: discoGrad }}
         >
-          <div className="z-10 h-60 w-60 bg-ocean rounded-full flex justify-center items-center flex-col">
-            <p className="text-6xl text-cream geist-mono">
+          <div className="z-10 h-[80%] w-[80%] bg-ocean rounded-full flex justify-center items-center flex-col">
+            <p className="text-[clamp(2.5rem,16cqw,3.75rem)] text-cream geist-mono">
               {formatTime(restante)}
             </p>
           </div>
@@ -140,7 +140,7 @@ export function Pomodoro({
         <div className="flex flex-col items-center text-cream/62">
           <p className="text-xs geist-mono">EM CURSO</p>
           <div className="flex items-center gap-3 text-lg">
-            <p className="font-bold text-2xl text-cream">
+            <p className="font-bold text-xl @lg:text-2xl text-cream text-center">
               {activeTask?.title ?? 'Nenhuma task selecionada'}
             </p>
             {clearTaskButton}
@@ -152,21 +152,21 @@ export function Pomodoro({
             onClick={isRunning ? handlePause : handleStart}
             type="button"
             variant="default"
-            className="px-12 py-8 cursor-pointer rounded-none text-ocean text-md border-3 border-cream bg-cream geist-mono"
+            className="px-8 py-6 @lg:px-12 @lg:py-8 cursor-pointer rounded-none text-ocean text-md border-3 border-cream bg-cream geist-mono"
           >
             {isRunning ? 'PAUSAR' : 'INICIAR'}
           </Button>
           <Button
             onClick={handleReset}
             variant="default"
-            className="w-20 py-8 cursor-pointer rounded-none text-cream/24 bg-ocean text-md border-3 border-cream/24 hover:text-cream"
+            className="w-14 py-6 @lg:w-20 @lg:py-8 cursor-pointer rounded-none text-cream/24 bg-ocean text-md border-3 border-cream/24 hover:text-cream"
           >
             <FiRotateCw />
           </Button>
           <Button
             onClick={handleNextPhase}
             variant="default"
-            className="w-20 py-8 cursor-pointer rounded-none text-cream/24 bg-ocean text-md border-r-3 border-t-3 border-b-3 border-cream/24 hover:text-cream"
+            className="w-14 py-6 @lg:w-20 @lg:py-8 cursor-pointer rounded-none text-cream/24 bg-ocean text-md border-r-3 border-t-3 border-b-3 border-cream/24 hover:text-cream"
           >
             <FiChevronsRight />
           </Button>
@@ -175,9 +175,9 @@ export function Pomodoro({
 
       <div
         data-tour="durations"
-        className="w-full py-3 md:py-0 md:h-15 flex items-center justify-center border-t-2 border-cream/24 geist-mono"
+        className="w-full shrink-0 py-2 @lg:py-0 @lg:h-15 flex items-center justify-center border-t-2 border-cream/24 geist-mono"
       >
-        <div className="grid w-full grid-cols-3 gap-1 px-2 md:flex md:w-auto md:gap-8 md:px-0">
+        <div className="grid w-full grid-cols-3 gap-1 px-2 @lg:flex @lg:w-auto @lg:gap-8 @lg:px-0">
           {timeControls.map((control) => (
             <TimeControl
               key={control.title}

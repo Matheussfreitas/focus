@@ -51,7 +51,7 @@ export function KanbanColumn({
       role="tabpanel"
       id={`panel-${column.id}`}
       aria-label={column.title}
-      className={`${active ? 'flex' : 'hidden'} md:flex h-full min-h-0 flex-1 flex-col border geist-mono ${dragBackgroundColor}`}
+      className={`${active ? 'flex' : 'hidden'} lg:flex h-full min-w-0 min-h-0 flex-1 flex-col border geist-mono ${dragBackgroundColor}`}
       onDragEnter={() => setIsOver(true)}
       onDragLeave={() => setIsOver(false)}
       onDrop={(e) => {

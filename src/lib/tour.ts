@@ -1,6 +1,6 @@
 import type { DriveStep } from 'driver.js'
 
-const DESKTOP_QUERY = '(min-width: 768px)'
+const DESKTOP_QUERY = '(min-width: 1024px)'
 
 type Section = 'general' | 'kanban'
 

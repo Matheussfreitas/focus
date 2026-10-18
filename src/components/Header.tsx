@@ -1,17 +1,89 @@
 import { authClient, useSession } from '#/lib/auth-client.ts'
 import { startTour } from '#/lib/tour.ts'
 import { PALETTES } from '#/lib/palette.ts'
+import { FiSettings } from 'react-icons/fi'
 import { LAYOUTS, resolveLayout } from '#/lib/layout.ts'
+import type { LayoutId } from '#/lib/layout.ts'
+import type { PaletteId } from '#/lib/palette.ts'
 import { usePreferences } from '#/lib/preferences.tsx'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu'
 import { Login } from './login'
+
+interface PreferencesMenuProps {
+  loggedIn: boolean
+  layout: LayoutId
+  palette: PaletteId
+  onLayoutChange: (id: LayoutId) => void
+  onPaletteChange: (id: PaletteId) => void
+}
+
+// Layout e cores dentro do dropdown: usado em telas pequenas, onde os
+// controles inline do header não cabem.
+function PreferencesMenu({
+  loggedIn,
+  layout,
+  palette,
+  onLayoutChange,
+  onPaletteChange,
+}: PreferencesMenuProps) {
+  const labelClass =
+    'px-3 pt-2 pb-1 geist-mono text-[10px] uppercase tracking-widest text-ink-muted'
+  const itemClass =
+    'cursor-pointer rounded-none geist-mono text-xs uppercase tracking-wide focus:bg-ink/10 focus:text-ink'
+
+  return (
+    <>
+      <DropdownMenuLabel className={labelClass}>Layout</DropdownMenuLabel>
+      <DropdownMenuRadioGroup
+        value={layout}
+        onValueChange={(value) => onLayoutChange(value as LayoutId)}
+      >
+        {LAYOUTS.map((item) => {
+          const Icon = item.icon
+          return (
+            <DropdownMenuRadioItem
+              key={item.id}
+              value={item.id}
+              disabled={item.requiresAuth && !loggedIn}
+              onSelect={(e) => e.preventDefault()}
+              className={itemClass}
+            >
+              <Icon className="h-3 w-3" />
+              {item.label}
+            </DropdownMenuRadioItem>
+          )
+        })}
+      </DropdownMenuRadioGroup>
+      <DropdownMenuSeparator className="m-0 bg-ink/20" />
+      <DropdownMenuLabel className={labelClass}>Cores</DropdownMenuLabel>
+      <DropdownMenuRadioGroup
+        value={palette}
+        onValueChange={(value) => onPaletteChange(value as PaletteId)}
+      >
+        {PALETTES.map((item) => (
+          <DropdownMenuRadioItem
+            key={item.id}
+            value={item.id}
+            onSelect={(e) => e.preventDefault()}
+            className={itemClass}
+          >
+            <span className={`h-3 w-3 shrink-0 ${item.swatch}`} />
+            {item.label}
+          </DropdownMenuRadioItem>
+        ))}
+      </DropdownMenuRadioGroup>
+    </>
+  )
+}
 
 export default function Header() {
   const { data: session, isPending } = useSession()
@@ -41,30 +113,42 @@ export default function Header() {
   const { palette, setPalette, layout, setLayout } = usePreferences()
   const loggedIn = !!session?.user
   const activeLayout = resolveLayout(layout, loggedIn)
+  const preferencesMenu = (
+    <PreferencesMenu
+      loggedIn={loggedIn}
+      layout={activeLayout}
+      palette={palette}
+      onLayoutChange={setLayout}
+      onPaletteChange={setPalette}
+    />
+  )
 
   return (
     <header className="top-0 z-50 bg-sand px-4 h-10">
-      <nav className="h-full page-wrap flex flex-wrap items-center gap-x-3">
-        <div className="h-full flex items-center gap-1.5 sm:gap-2 mr-auto">
+      <nav className="h-full flex items-center gap-x-3">
+        <div className="h-full min-w-0 flex items-center gap-1.5 sm:gap-2 mr-auto">
           <p className="font-bold text-ink">FOCUS</p>
-          <div className="h-full w-0.5 bg-ink" />
-          <p className="text-xs text-ink-muted geist-mono">
+          <div className="hidden sm:block h-full w-0.5 bg-ink" />
+          <p className="hidden sm:block text-xs text-ink-muted geist-mono whitespace-nowrap">
             {daysOfWeek[weekDay]} {day} {monthsOfYear[month]}
           </p>
         </div>
 
-        <div className="h-full flex items-center gap-1.5 sm:gap-2 ml-auto">
+        <div className="h-full min-w-0 flex items-center gap-1.5 sm:gap-2 ml-auto">
           {/* <BetterAuthHeader /> */}
           <button
             type="button"
             aria-label="Ver tour guiado"
             title="Ver tour guiado"
             onClick={() => void startTour({ loggedIn })}
-            className="hidden md:flex h-4 w-4 items-center justify-center bg-ink text-sand text-[10px] font-bold geist-mono cursor-pointer"
+            className="hidden lg:flex h-4 w-4 items-center justify-center bg-ink text-sand text-[10px] font-bold geist-mono cursor-pointer"
           >
             ?
           </button>
-          <div className="flex items-center gap-0.5" data-tour="layout">
+          <div
+            className="hidden lg:flex items-center gap-0.5"
+            data-tour="layout"
+          >
             {LAYOUTS.map((item) => {
               const selected = activeLayout === item.id
               const disabled = item.requiresAuth && !loggedIn
@@ -89,8 +173,8 @@ export default function Header() {
               )
             })}
           </div>
-          <div className="h-full w-0.5 bg-ink" />
-          <div className="flex items-center" data-tour="palette">
+          <div className="hidden lg:block h-full w-0.5 bg-ink" />
+          <div className="hidden lg:flex items-center" data-tour="palette">
             {PALETTES.map((item) => {
               const selected = palette === item.id
               return (
@@ -108,13 +192,13 @@ export default function Header() {
               )
             })}
           </div>
-          <div className="h-full w-0.5 bg-ink" />
+          <div className="hidden lg:block h-full w-0.5 bg-ink" />
           {isPending ? (
             <div className="h-4 w-16 bg-ink/20 animate-pulse" />
           ) : session?.user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="text-xs bg-ink text-sand rounded-none cursor-pointer px-4 py-1 geist-mono uppercase tracking-wide">
+                <button className="text-xs bg-ink text-sand rounded-none cursor-pointer px-4 py-1 geist-mono uppercase tracking-wide max-w-[45vw] truncate">
                   {session.user.name || session.user.email}
                 </button>
               </DropdownMenuTrigger>
@@ -135,6 +219,10 @@ export default function Header() {
                   </div>
                 </div>
                 <DropdownMenuSeparator className="m-0 bg-ink/20" />
+                <div className="lg:hidden">
+                  {preferencesMenu}
+                  <DropdownMenuSeparator className="m-0 bg-ink/20" />
+                </div>
                 <DropdownMenuItem
                   variant="destructive"
                   onClick={() => authClient.signOut()}
@@ -145,7 +233,28 @@ export default function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Login />
+            <>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    type="button"
+                    aria-label="Layout e cores"
+                    title="Layout e cores"
+                    className="lg:hidden flex h-6 w-6 items-center justify-center bg-ink text-sand cursor-pointer"
+                  >
+                    <FiSettings className="h-3 w-3" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  sideOffset={8}
+                  className="rounded-none border border-ink bg-sand p-0 text-ink shadow-none"
+                >
+                  {preferencesMenu}
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <Login />
+            </>
           )}
           {/* <ThemeToggle /> */}
         </div>

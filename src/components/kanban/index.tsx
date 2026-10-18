@@ -55,7 +55,7 @@ export function Kanban({ onStartTask }: Readonly<KanbanProps>) {
       <div
         role="tablist"
         aria-label="Colunas do kanban"
-        className="grid grid-cols-3 border-b-2 border-ink md:hidden"
+        className="grid grid-cols-3 border-b-2 border-ink lg:hidden"
       >
         {columns.map((column) => {
           const selected = column.id === activeColumn
