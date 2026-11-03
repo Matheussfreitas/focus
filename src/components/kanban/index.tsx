@@ -1,5 +1,8 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { TaskStatus } from '#/generated/prisma/enums.ts'
+import type { TaskPriority } from '#/generated/prisma/enums.ts'
+import { usePreferences } from '#/lib/preferences.tsx'
+import { doneCutoff } from '#/lib/taskFilters.ts'
 import { KanbanColumn } from './components/KanbanColumn'
 import { isTaskOverdue } from './dueDate'
 import type { Task } from './types/task.type'
@@ -24,6 +27,18 @@ export function Kanban({ onStartTask }: Readonly<KanbanProps>) {
     updateTaskMutation,
     deleteTaskMutation,
   } = useTaskQueries()
+  const { doneRange } = usePreferences()
+
+  // Concluídas somem do painel após o período escolhido, mas continuam no banco.
+  const visibleTasks = useMemo(() => {
+    const cutoff = doneCutoff(doneRange)
+    if (cutoff === null) return tasksState
+    return tasksState.filter((task) => {
+      if (task.status !== TaskStatus.DONE) return true
+      const doneAt = new Date(task.completedAt ?? task.updatedAt).getTime()
+      return doneAt >= cutoff
+    })
+  }, [tasksState, doneRange])
 
   const handleUpdateTask = async (updatedTask: Task) => {
     try {
@@ -42,6 +57,7 @@ export function Kanban({ onStartTask }: Readonly<KanbanProps>) {
     description?: string
     dueDate?: Date
     tagId?: string
+    priority: TaskPriority
     status: TaskStatus
   }) => {
     // Toda task nova nasce em "A Fazer", independente da coluna do botão +.
@@ -60,7 +76,7 @@ export function Kanban({ onStartTask }: Readonly<KanbanProps>) {
       >
         {columns.map((column) => {
           const selected = column.id === activeColumn
-          const columnTasks = tasksState.filter((t) => t.status === column.id)
+          const columnTasks = visibleTasks.filter((t) => t.status === column.id)
           const count = columnTasks.length
           const hasOverdue = columnTasks.some(isTaskOverdue)
           return (
@@ -94,7 +110,7 @@ export function Kanban({ onStartTask }: Readonly<KanbanProps>) {
             key={column.id}
             column={column}
             active={column.id === activeColumn}
-            tasks={tasksState}
+            tasks={visibleTasks}
             loading={isLoading}
             index={index + 1}
             updateTask={handleUpdateTask}

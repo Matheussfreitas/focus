@@ -11,6 +11,7 @@ import {
   getOverdueDays,
   isTaskOverdue,
 } from '../dueDate'
+import { PRIORITY_LABEL } from '#/lib/taskFilters.ts'
 import type { Task } from '../types/task.type'
 
 // bg-sand
@@ -81,9 +82,22 @@ export function KanbanCard({
         }}
         className="flex-1 flex flex-col gap-2 px-3 md:px-4 self-stretch justify-center cursor-pointer focus-visible:outline-2 focus-visible:outline-ink"
       >
-        <p className="text-ink font-semibold text-base md:text-[13px]">
-          {task.title}
-        </p>
+        <div className="flex items-start justify-between gap-2">
+          <p className="text-ink font-semibold text-base md:text-[13px]">
+            {task.title}
+          </p>
+          {task.priority !== 'MEDIUM' && (
+            <span
+              className={`shrink-0 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide geist-mono ${
+                task.priority === 'HIGH'
+                  ? 'bg-danger text-sand'
+                  : 'border border-ink/40 text-ink-muted'
+              }`}
+            >
+              {PRIORITY_LABEL[task.priority]}
+            </span>
+          )}
+        </div>
         {task.description && (
           <p className="text-ink-muted text-sm md:text-xs">
             {task.description}

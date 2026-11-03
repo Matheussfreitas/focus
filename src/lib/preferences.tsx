@@ -4,12 +4,18 @@ import type { LayoutId } from './layout'
 import { setPreferenceCookie } from './cookie'
 import { migrateLegacyPalette, setPalette as applyPalette } from './palette'
 import type { PaletteId } from './palette'
+import { DONE_RANGE_COOKIE, TODO_SORT_COOKIE } from './taskFilters'
+import type { DoneRange, TodoSort } from './taskFilters'
 
 interface Preferences {
   layout: LayoutId
   palette: PaletteId
+  doneRange: DoneRange
+  todoSort: TodoSort
   setLayout: (id: LayoutId) => void
   setPalette: (id: PaletteId) => void
+  setDoneRange: (id: DoneRange) => void
+  setTodoSort: (id: TodoSort) => void
 }
 
 const PreferencesContext = createContext<Preferences | null>(null)
@@ -20,11 +26,18 @@ export function PreferencesProvider({
   initial,
   children,
 }: {
-  initial: { layout: LayoutId; palette: PaletteId }
+  initial: {
+    layout: LayoutId
+    palette: PaletteId
+    doneRange: DoneRange
+    todoSort: TodoSort
+  }
   children: React.ReactNode
 }) {
   const [layout, setLayoutState] = useState(initial.layout)
   const [palette, setPaletteState] = useState(initial.palette)
+  const [doneRange, setDoneRangeState] = useState(initial.doneRange)
+  const [todoSort, setTodoSortState] = useState(initial.todoSort)
 
   useEffect(() => {
     const migrated = migrateLegacyPalette()
@@ -35,6 +48,16 @@ export function PreferencesProvider({
     () => ({
       layout,
       palette,
+      doneRange,
+      todoSort,
+      setDoneRange: (id) => {
+        setPreferenceCookie(DONE_RANGE_COOKIE, id)
+        setDoneRangeState(id)
+      },
+      setTodoSort: (id) => {
+        setPreferenceCookie(TODO_SORT_COOKIE, id)
+        setTodoSortState(id)
+      },
       setLayout: (id) => {
         setPreferenceCookie(LAYOUT_COOKIE, id)
         setLayoutState(id)
@@ -44,7 +67,7 @@ export function PreferencesProvider({
         setPaletteState(id)
       },
     }),
-    [layout, palette],
+    [layout, palette, doneRange, todoSort],
   )
 
   return (

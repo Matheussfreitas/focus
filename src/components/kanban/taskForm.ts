@@ -37,6 +37,7 @@ export const taskSchema = z.object({
       message: 'Data inválida (dd/mm/aaaa)',
     }),
   tagId: z.string().optional(),
+  priority: z.enum(['LOW', 'MEDIUM', 'HIGH']),
 })
 
 export type TaskFormData = z.infer<typeof taskSchema>

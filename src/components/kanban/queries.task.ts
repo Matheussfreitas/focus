@@ -38,11 +38,16 @@ export function useTaskQueries() {
       const previousTasks = queryClient.getQueryData<Task[]>(['tasks'])
 
       queryClient.setQueryData<Task[]>(['tasks'], (old) =>
-        (old ?? []).map((task) =>
-          task.id === variables.data.id
-            ? ({ ...task, ...variables.data } as Task)
-            : task,
-        ),
+        (old ?? []).map((task) => {
+          if (task.id !== variables.data.id) return task
+          const next = { ...task, ...variables.data } as Task
+          // espelha a regra do servidor: completedAt muda só na transição
+          const wasDone = task.status === 'DONE'
+          const isDone = next.status === 'DONE'
+          if (isDone && !wasDone) next.completedAt = new Date()
+          else if (!isDone && wasDone) next.completedAt = null
+          return next
+        }),
       )
 
       return { previousTasks }

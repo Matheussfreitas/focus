@@ -1,6 +1,6 @@
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
-import { TaskStatus } from '#/generated/prisma/enums.ts'
+import { TaskPriority, TaskStatus } from '#/generated/prisma/enums.ts'
 import { prisma } from '#/db.ts';
 import { authMiddleware } from '../middleware/auth'
 
@@ -22,6 +22,7 @@ const createTaskSchema = z.object({
   description: z.string().optional(),
   tagId: z.string().optional(),
   status: z.nativeEnum(TaskStatus).default(TaskStatus.TODO),
+  priority: z.nativeEnum(TaskPriority).default(TaskPriority.MEDIUM),
   dueDate: z.coerce.date().optional(),
 })
 
@@ -45,6 +46,7 @@ const updateTaskSchema = z.object({
   description: z.string().nullable().optional(),
   tagId: z.string().nullable().optional(),
   status: z.nativeEnum(TaskStatus).optional(),
+  priority: z.nativeEnum(TaskPriority).optional(),
   dueDate: z.coerce.date().nullable().optional(),
 })
 
@@ -54,12 +56,26 @@ export const updateTask = createServerFn({ method: 'POST' })
   .handler(async ({ data, context }) => {
     const { id, ...rest } = data
 
+    // O cliente reenvia a task inteira a cada edição, então completedAt só
+    // muda na transição real: entra em DONE -> agora; sai de DONE -> null.
+    let completedAt: Date | null | undefined
+    if (rest.status !== undefined) {
+      const current = await prisma.task.findFirst({
+        where: { id, userId: context.userId },
+        select: { status: true },
+      })
+      const wasDone = current?.status === TaskStatus.DONE
+      const isDone = rest.status === TaskStatus.DONE
+      if (isDone && !wasDone) completedAt = new Date()
+      else if (!isDone && wasDone) completedAt = null
+    }
+
     // updateMany em vez de update: garante que só atualiza se a task
     // pertence ao usuário logado (update simples não filtraria por userId
     // porque a busca é feita pela chave única `id`).
     const result = await prisma.task.updateMany({
       where: { id, userId: context.userId },
-      data: rest,
+      data: { ...rest, completedAt },
     })
 
     if (result.count === 0) {

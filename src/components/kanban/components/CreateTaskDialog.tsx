@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { PlusIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import type { TaskStatus } from '#/generated/prisma/enums.ts'
+import type { TaskPriority, TaskStatus } from '#/generated/prisma/enums.ts'
 import { Button } from '../../ui/button'
 import {
   Dialog,
@@ -19,6 +19,7 @@ type CreateTaskData = {
   description?: string
   dueDate?: Date
   tagId?: string
+  priority: TaskPriority
   status: TaskStatus
 }
 
@@ -42,6 +43,7 @@ export function CreateTaskDialog({
     formState: { errors },
   } = useForm<TaskFormData>({
     resolver: zodResolver(taskSchema),
+    defaultValues: { priority: 'MEDIUM' },
   })
 
   const selectedTagId = watch('tagId')
@@ -58,6 +60,7 @@ export function CreateTaskDialog({
           ? (parseDDMMYYYY(data.dueDate) ?? undefined)
           : undefined,
         tagId: data.tagId,
+        priority: data.priority,
         status,
       })
       reset()
@@ -106,6 +109,7 @@ export function CreateTaskDialog({
             errors={errors}
             selectedTagId={selectedTagId}
             dueDate={watch('dueDate')}
+            priority={watch('priority')}
             title={watch('title')}
             description={watch('description')}
           />

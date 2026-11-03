@@ -3,6 +3,11 @@ import { CreateTaskDialog } from './CreateTaskDialog'
 import { FiAlertCircle } from 'react-icons/fi'
 import { KanbanCard } from './KanbanCard'
 import { isTaskOverdue } from '../dueDate'
+import { DoneRangeMenu, TodoSortMenu } from './TaskFilters'
+import { usePreferences } from '#/lib/preferences.tsx'
+import { PRIORITY_WEIGHT } from '#/lib/taskFilters.ts'
+import { TaskStatus } from '#/generated/prisma/enums.ts'
+import type { TaskPriority } from '#/generated/prisma/enums.ts'
 import type { Column } from '../types/column.type'
 import type { Task } from '../types/task.type'
 
@@ -19,6 +24,7 @@ interface KanbanColumnProps {
     description?: string
     dueDate?: Date
     tagId?: string
+    priority: TaskPriority
     status: Column['id']
   }) => Promise<void>
   onStartTask: (task: Task) => void
@@ -36,6 +42,7 @@ export function KanbanColumn({
   onStartTask,
 }: Readonly<KanbanColumnProps>) {
   const [isOver, setIsOver] = useState(false)
+  const { todoSort } = usePreferences()
 
   const format = (i: number) => {
     if (i < 10) {
@@ -48,13 +55,19 @@ export function KanbanColumn({
   const filterTasksByColumn = tasks
     .filter((task) => task.status === column.id)
     .sort((a, b) => {
+      // Em "A Fazer" por prioridade, o nível manda e o atraso só desempata
+      // dentro dele; nos demais casos atrasadas vêm primeiro.
+      if (column.id === TaskStatus.TODO && todoSort === 'priority') {
+        const diff = PRIORITY_WEIGHT[b.priority] - PRIORITY_WEIGHT[a.priority]
+        if (diff !== 0) return diff
+      }
       const aOverdue = isTaskOverdue(a)
       const bOverdue = isTaskOverdue(b)
       if (aOverdue !== bOverdue) return aOverdue ? -1 : 1
       if (aOverdue && a.dueDate && b.dueDate) {
         return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
       }
-      return 0
+      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
     })
   const overdueCount = filterTasksByColumn.filter(isTaskOverdue).length
 
@@ -103,6 +116,8 @@ export function KanbanColumn({
           )}
         </span>
         <span className="flex gap-2 items-center">
+          {column.id === TaskStatus.TODO && <TodoSortMenu />}
+          {column.id === TaskStatus.DONE && <DoneRangeMenu />}
           <p>{filterTasksByColumn.length}</p>
           <CreateTaskDialog status={column.id} onCreate={onCreateTask} />
         </span>

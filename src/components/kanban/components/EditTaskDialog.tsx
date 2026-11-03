@@ -40,6 +40,7 @@ export function EditTaskDialog({
     description: task.description ?? '',
     dueDate: task.dueDate ? formatDDMMYYYY(new Date(task.dueDate)) : '',
     tagId: task.tagId ?? undefined,
+    priority: task.priority,
   }
 
   const {
@@ -74,6 +75,7 @@ export function EditTaskDialog({
         description: data.description?.trim() ? data.description : null,
         dueDate: data.dueDate ? parseDDMMYYYY(data.dueDate) : null,
         tagId,
+        priority: data.priority,
         tag: tagsState.find((tag) => tag.id === tagId) ?? null,
       })
       onOpenChange(false)
@@ -111,6 +113,7 @@ export function EditTaskDialog({
             errors={errors}
             selectedTagId={watch('tagId')}
             dueDate={watch('dueDate')}
+            priority={watch('priority')}
             title={watch('title')}
             description={watch('description')}
           />

@@ -21,6 +21,7 @@ import { TAG_COLOR_HEX } from '../tagColors'
 import { ClearButton } from './ClearButton'
 import { DueDatePicker } from './DueDatePicker'
 import type { TaskFormData } from '../taskForm'
+import { PRIORITY_LABEL } from '#/lib/taskFilters.ts'
 
 export const inputClassName = 'input-field'
 
@@ -30,6 +31,7 @@ interface TaskFormFieldsProps {
   errors: FieldErrors<TaskFormData>
   selectedTagId?: string
   dueDate?: string
+  priority?: TaskFormData['priority']
   title?: string
   description?: string
 }
@@ -40,6 +42,7 @@ export function TaskFormFields({
   errors,
   selectedTagId,
   dueDate,
+  priority,
   title,
   description,
 }: Readonly<TaskFormFieldsProps>) {
@@ -115,6 +118,27 @@ export function TaskFormFields({
               <span className="text-error">{errors.dueDate.message}</span>
             )}
           </FieldError>
+        </Field>
+        <Field>
+          <Label className="label-mono">Prioridade</Label>
+          <div role="radiogroup" aria-label="Prioridade" className="grid grid-cols-3">
+            {(['LOW', 'MEDIUM', 'HIGH'] as const).map((level) => (
+              <button
+                key={level}
+                type="button"
+                role="radio"
+                aria-checked={priority === level}
+                onClick={() =>
+                  setValue('priority', level, { shouldDirty: true })
+                }
+                className={`h-9 border border-ink text-sm cursor-pointer ${
+                  priority === level ? 'bg-ink text-sand' : 'text-ink'
+                }`}
+              >
+                {PRIORITY_LABEL[level]}
+              </button>
+            ))}
+          </div>
         </Field>
         <Field>
           <Label className="label-mono">Tag</Label>
