@@ -67,6 +67,18 @@ body {
   --color-tag-pink: var(--color-palette-pink);
   --color-tag-brown: #4a3728;
   --color-tag-gray: #5d5344;
+
+  /* Versões das tags para gráficos: mesmo matiz, mais claras e saturadas,
+     para que barras vizinhas se distingam sobre a areia. */
+  --color-chart-red: #d8413f;
+  --color-chart-orange: #eb7a2e;
+  --color-chart-yellow: #e0a000;
+  --color-chart-green: #12855a;
+  --color-chart-blue: #2a78d6;
+  --color-chart-purple: #6f52d0;
+  --color-chart-pink: #e06a9a;
+  --color-chart-brown: #a0652a;
+  --color-chart-gray: #8b877e;
 }
 
 /* Paleta ativa: define data-palette no <html> (ver src/lib/palette.ts).
@@ -262,4 +274,76 @@ body {
 }
 .focus-tour .driver-popover-arrow-side-bottom.driver-popover-arrow {
   border-bottom-color: var(--color-sand);
+}
+
+/* ---------- Dashboard ---------- */
+
+@keyframes dash-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes dash-grow {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes dash-grow-x {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.dash-rise {
+  animation: dash-rise 520ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+
+.dash-bar {
+  transform-box: fill-box;
+  transform-origin: bottom;
+  animation: dash-grow 640ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(200ms + var(--i, 0) * 12ms);
+}
+
+.dash-bar-x {
+  transform-origin: left;
+  animation: dash-grow-x 700ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(300ms + var(--i, 0) * 50ms);
+}
+
+.dash-num {
+  font-family: 'Geist Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.04em;
+}
+
+/* "Sem tag": hachura em vez de cor, para não competir com as tags */
+.dash-hatch {
+  background-image: repeating-linear-gradient(
+    135deg,
+    var(--color-ink-muted) 0 1.5px,
+    transparent 1.5px 5px
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dash-rise,
+  .dash-bar,
+  .dash-bar-x {
+    animation: none;
+  }
 }

@@ -5,10 +5,32 @@ const DURATION_DEFAULT = 25 * 60 * 1000 // 25 minutos em ms
 const PAUSE_DEFAULT = 5 * 60 * 1000 // 5 minutos em ms
 const LONG_PAUSE_DEFAULT = 15 * 60 * 1000 // 15 minutos em ms
 const ONE_MINUTE = 60 * 1000
+// Blocos de foco menores que isso não entram no histórico (cliques sem querer).
+const MIN_LOGGED_FOCUS = ONE_MINUTE
+
+export interface FocusBlock {
+  taskId: string | null
+  startedAt: Date
+  endedAt: Date
+  focusedMs: number
+  plannedMs: number
+  completed: boolean
+}
+
+interface UsePomodoroOptions {
+  // Chamado ao fim de cada bloco de foco (concluído ou interrompido).
+  onFocusEnd?: (block: FocusBlock) => void
+  // Task em foco, lida quando o bloco começa: concluir a task no meio do
+  // foco não tira dela o tempo já investido.
+  getTaskId?: () => string | null
+}
 
 // Estado do timer fica fora da visão: trocar de layout ou abrir o pop-up
 // não desmonta o relógio nem zera a contagem.
-export function usePomodoro() {
+export function usePomodoro({
+  onFocusEnd,
+  getTaskId,
+}: UsePomodoroOptions = {}) {
   const [duration, setDuration] = useState(DURATION_DEFAULT)
   const [pause, setPause] = useState(PAUSE_DEFAULT)
   const [longPause, setLongPause] = useState(LONG_PAUSE_DEFAULT)
@@ -21,6 +43,17 @@ export function usePomodoro() {
   // O tick roda dentro de um setInterval criado em outra renderização; lê fase
   // e durações por refs para nunca usar valores velhos.
   const phaseRef = useRef(0)
+
+  // Contabilidade do bloco de foco atual: início do bloco, tempo já somado
+  // em trechos anteriores (entre pausas) e início do trecho em andamento.
+  const focusStartRef = useRef<number | null>(null)
+  const focusAccumRef = useRef(0)
+  const runStartRef = useRef<number | null>(null)
+  const focusTaskRef = useRef<string | null>(null)
+  const onFocusEndRef = useRef(onFocusEnd)
+  onFocusEndRef.current = onFocusEnd
+  const getTaskIdRef = useRef(getTaskId)
+  getTaskIdRef.current = getTaskId
 
   const focusFlow = [
     { type: 'focus', duration: duration, title: 'FOCO' },
@@ -49,6 +82,36 @@ export function usePomodoro() {
     }
   }
 
+  function isFocusPhase() {
+    return focusFlowRef.current[phaseRef.current].type === 'focus'
+  }
+
+  // Fecha o trecho em andamento, somando-o ao bloco de foco.
+  function closeRun() {
+    if (runStartRef.current === null) return
+    focusAccumRef.current += Date.now() - runStartRef.current
+    runStartRef.current = null
+  }
+
+  // Encerra o bloco de foco atual e o reporta (se durou o mínimo).
+  function flushFocus(completed: boolean) {
+    closeRun()
+    const startedAt = focusStartRef.current
+    const focusedMs = focusAccumRef.current
+    focusStartRef.current = null
+    focusAccumRef.current = 0
+    if (startedAt === null || !isFocusPhase()) return
+    if (focusedMs < MIN_LOGGED_FOCUS) return
+    onFocusEndRef.current?.({
+      taskId: focusTaskRef.current,
+      startedAt: new Date(startedAt),
+      endedAt: new Date(),
+      focusedMs: Math.round(focusedMs),
+      plannedMs: focusFlowRef.current[phaseRef.current].duration,
+      completed,
+    })
+  }
+
   function goToPhase(phase: number) {
     phaseRef.current = phase
     setCurrentPhase(phase)
@@ -60,6 +123,7 @@ export function usePomodoro() {
   function handlePhaseEnd() {
     const flow = focusFlowRef.current
     const next = phaseRef.current + 1
+    flushFocus(true)
     if (next < flow.length) {
       playPhaseEnd()
       goToPhase(next)
@@ -83,6 +147,14 @@ export function usePomodoro() {
   function iniciar(tempo: number) {
     pararInterval()
     alvoRef.current = Date.now() + tempo
+    if (isFocusPhase()) {
+      const now = Date.now()
+      if (focusStartRef.current === null) {
+        focusStartRef.current = now
+        focusTaskRef.current = getTaskIdRef.current?.() ?? null
+      }
+      runStartRef.current = now
+    }
     setIsRunning(true)
     intervalRef.current = setInterval(tick, 100)
   }
@@ -95,23 +167,28 @@ export function usePomodoro() {
 
   function handlePause() {
     pararInterval()
+    closeRun()
     setIsRunning(false)
   }
 
   function handleReset() {
     pararInterval()
+    flushFocus(false)
     setIsRunning(false)
     setRestante(DURATION_DEFAULT)
   }
 
   function handleNextPhase() {
     pararInterval()
+    flushFocus(false)
     setIsRunning(false)
     goToPhase((phaseRef.current + 1) % focusFlow.length)
   }
 
   // ao iniciar uma task no Kanban, recomeça o foco do zero
   function startFocus() {
+    pararInterval()
+    flushFocus(false)
     unlockAudio()
     setCycleCompleted(false)
     goToPhase(0)
@@ -165,6 +242,12 @@ export function usePomodoro() {
     handleReset,
     handleNextPhase,
     startFocus,
+    // Pausa e fecha o bloco atual (ex.: a task foi tirada do timer).
+    interruptFocus: () => {
+      pararInterval()
+      flushFocus(false)
+      setIsRunning(false)
+    },
     cycleCompleted,
     focusMinutesPerCycle: Math.round(
       focusFlow

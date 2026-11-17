@@ -5,6 +5,7 @@ import {
 } from '@tanstack/react-router'
 import Footer from '../components/Footer'
 import Header from '../components/Header'
+import { PomodoroProvider } from '../components/pomodoro/PomodoroProvider'
 import { PreferencesProvider } from '../lib/preferences'
 import { getPreferences } from '../server/preferences'
 
@@ -59,8 +60,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body className="h-dvh flex flex-col antialiased wrap-anywhere">
         <PreferencesProvider initial={preferences}>
-          <Header />
-          <main className="flex-1 min-h-0">{children}</main>
+          <PomodoroProvider>
+            <Header />
+            <main className="flex-1 min-h-0">{children}</main>
+          </PomodoroProvider>
         </PreferencesProvider>
         {/* <Footer /> */}
         <Scripts />
