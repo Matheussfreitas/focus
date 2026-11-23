@@ -10,9 +10,8 @@ import { Kanban } from '../components/kanban'
 import type { Task } from '../components/kanban/types/task.type'
 import { TaskStatus } from '#/generated/prisma/enums.ts'
 import { Pomodoro } from '../components/pomodoro'
-import { CycleCompleteToast } from '../components/pomodoro/CycleCompleteToast'
 import { FloatingPomodoro } from '../components/pomodoro/FloatingPomodoro'
-import { usePomodoro } from '../components/pomodoro/usePomodoro'
+import { usePomodoroContext } from '../components/pomodoro/PomodoroProvider'
 import { getLayoutDef, resolveLayout } from '#/lib/layout.ts'
 import type { PanelId } from '#/lib/layout.ts'
 import { usePreferences } from '#/lib/preferences.tsx'
@@ -38,11 +37,15 @@ function HomePage() {
   const { data: clientSession, isPending } = useSession()
   // Até o cliente resolver a sessão, vale a do servidor (evita o "vazio").
   const user = isPending ? serverSession?.user : clientSession?.user
-  const [activeTaskId, setActiveTaskId] = useState<string | null>(null)
+  const {
+    pomodoro,
+    activeTaskId,
+    setActiveTaskId,
+    floatingOpen,
+    setFloatingOpen,
+  } = usePomodoroContext()
   const [percentageScreen, setPercentageScreen] = useState<number>(0.42)
   const [mobileView, setMobileView] = useState<'timer' | 'tasks'>('timer')
-  const [floatingOpen, setFloatingOpen] = useState(false)
-  const pomodoro = usePomodoro()
   const { layout } = usePreferences()
   const isDraggingRef = useRef(false)
   const areaRef = useRef<HTMLDivElement>(null)
@@ -120,6 +123,8 @@ function HomePage() {
   // não está na tela principal, ele aparece na janela flutuante.
   const handleStartTask = (task: Task) => {
     if (task.status === TaskStatus.DONE) return
+    // O bloco em curso fecha com a task antiga; o novo já nasce com a nova.
+    pomodoro.interruptFocus()
     setActiveTaskId(task.id)
     pomodoro.startFocus()
     setMobileView('timer')
@@ -128,8 +133,8 @@ function HomePage() {
 
   // Tira a task do timer (que pausa) e deixa o pomodoro vazio.
   const handleClearTask = () => {
+    pomodoro.interruptFocus()
     setActiveTaskId(null)
-    pomodoro.handlePause()
   }
 
   const PANELS: Record<PanelId, React.ReactNode> = {
@@ -211,12 +216,6 @@ function HomePage() {
           </button>
         </nav>
       )}
-
-      <CycleCompleteToast
-        open={pomodoro.cycleCompleted}
-        focusMinutes={pomodoro.focusMinutesPerCycle}
-        onClose={pomodoro.dismissCelebration}
-      />
 
       {!showsPomodoro && (
         <FloatingPomodoro

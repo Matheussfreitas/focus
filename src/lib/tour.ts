@@ -88,26 +88,18 @@ const LOGIN_STEP: DriveStep = {
   },
 }
 
-const PALETTE_STEP: DriveStep = {
-  element: '[data-tour="palette"]',
-  popover: {
-    title: 'Escolha sua cor',
-    description:
-      'Troque a paleta principal do Focus. A escolha fica salva neste navegador.',
-    side: 'bottom',
-    align: 'end',
-  },
-}
-
-const LAYOUT_STEP: DriveStep = {
-  element: '[data-tour="layout"]',
-  popover: {
-    title: 'Monte sua tela',
-    description:
-      'Use timer e tarefas lado a lado ou só um deles. Com só as tarefas, o timer vira uma janela flutuante.',
-    side: 'bottom',
-    align: 'end',
-  },
+function menuStep(loggedIn: boolean): DriveStep {
+  return {
+    element: '[data-tour="menu"]',
+    popover: {
+      title: 'Tudo no seu menu',
+      description: loggedIn
+        ? 'Layout da tela, paleta de cores, o dashboard com seu progresso e este tour ficam aqui dentro.'
+        : 'Layout da tela, paleta de cores e este tour ficam aqui dentro.',
+      side: 'bottom',
+      align: 'end',
+    },
+  }
 }
 
 const KANBAN_STEPS: DriveStep[] = [
@@ -164,7 +156,7 @@ function buildSteps(sections: Section[], loggedIn: boolean): DriveStep[] {
   }
   if (sections.includes('general')) {
     if (!loggedIn) steps.push(LOGIN_STEP)
-    steps.push(LAYOUT_STEP, PALETTE_STEP)
+    steps.push(menuStep(loggedIn))
   }
 
   // Ignora passos cujo elemento não está na tela (ex.: nenhuma tarefa criada ainda).

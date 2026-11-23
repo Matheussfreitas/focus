@@ -19,6 +19,7 @@ model User {
   accounts      Account[]
   tasks         Task[]
   tags          Tags[]
+  focusSessions FocusSession[]
 
   @@unique([email])
   @@map("user")
@@ -86,6 +87,7 @@ model Task {
   updatedAt   DateTime   @updatedAt
   userId      String
   user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  focusSessions FocusSession[]
 
   @@index([userId])
   @@map("task")
@@ -98,12 +100,34 @@ model Tags {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   tasks     Task[]
+  focusSessions FocusSession[]
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, name])
   @@index([userId])
   @@map("tags")
+}
+
+// Cada bloco de foco do pomodoro. tagId é uma foto da tag no momento: se a
+// task mudar de tag depois, o tempo continua contando para a tag original.
+model FocusSession {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  taskId    String?
+  task      Task?    @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  tagId     String?
+  tag       Tags?    @relation(fields: [tagId], references: [id], onDelete: SetNull)
+  startedAt DateTime
+  endedAt   DateTime
+  focusedMs Int
+  plannedMs Int
+  completed Boolean
+  createdAt DateTime @default(now())
+
+  @@index([userId, startedAt])
+  @@map("focus_session")
 }
 
 enum TaskStatus {
