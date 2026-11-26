@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppRouteImport } from './routes/app'
 import { Route as ContaRouteImport } from './routes/conta'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
@@ -19,6 +20,11 @@ import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContaRoute = ContaRouteImport.update({
@@ -49,6 +55,7 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/app': typeof AppRoute
   '/conta': typeof ContaRoute
   '/dashboard': typeof DashboardRoute
   '/privacidade': typeof PrivacidadeRoute
@@ -57,6 +64,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/app': typeof AppRoute
   '/conta': typeof ContaRoute
   '/dashboard': typeof DashboardRoute
   '/privacidade': typeof PrivacidadeRoute
@@ -66,6 +74,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/app': typeof AppRoute
   '/conta': typeof ContaRoute
   '/dashboard': typeof DashboardRoute
   '/privacidade': typeof PrivacidadeRoute
@@ -75,12 +84,26 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/conta' | '/dashboard' | '/privacidade' | '/termos' | '/api/auth/$'
+    | '/'
+    | '/app'
+    | '/conta'
+    | '/dashboard'
+    | '/privacidade'
+    | '/termos'
+    | '/api/auth/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/conta' | '/dashboard' | '/privacidade' | '/termos' | '/api/auth/$'
+  to:
+    | '/'
+    | '/app'
+    | '/conta'
+    | '/dashboard'
+    | '/privacidade'
+    | '/termos'
+    | '/api/auth/$'
   id:
     | '__root__'
     | '/'
+    | '/app'
     | '/conta'
     | '/dashboard'
     | '/privacidade'
@@ -90,6 +113,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRoute
   ContaRoute: typeof ContaRoute
   DashboardRoute: typeof DashboardRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
@@ -104,6 +128,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/conta': {
@@ -146,6 +177,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRoute,
   ContaRoute: ContaRoute,
   DashboardRoute: DashboardRoute,
   PrivacidadeRoute: PrivacidadeRoute,

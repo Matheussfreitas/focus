@@ -2,6 +2,7 @@ import {
   HeadContent,
   Scripts,
   createRootRouteWithContext,
+  useRouterState,
 } from '@tanstack/react-router'
 import Footer from '../components/Footer'
 import Header from '../components/Header'
@@ -63,7 +64,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body className="h-dvh flex flex-col antialiased wrap-anywhere">
         <PreferencesProvider initial={preferences}>
           <PomodoroProvider>
-            <Header />
+            <AppHeader />
             <main className="flex-1 min-h-0">{children}</main>
           </PomodoroProvider>
         </PreferencesProvider>
@@ -74,4 +75,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </body>
     </html>
   )
+}
+
+// A landing (/) tem navegação e rodapé próprios; o header do app fica de fora.
+function AppHeader() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname })
+  return pathname === '/' ? null : <Header />
 }

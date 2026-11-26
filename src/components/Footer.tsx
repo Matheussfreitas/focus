@@ -5,8 +5,8 @@ const linkClass = 'hover:text-ink hover:underline'
 
 export default function Footer() {
   const pathname = useRouterState({ select: (s) => s.location.pathname })
-  // A tela de foco ocupa a altura toda: sem rodapé lá.
-  if (pathname === '/') return null
+  // Tela de foco ocupa a altura toda; a landing tem rodapé próprio.
+  if (pathname === '/' || pathname === '/app') return null
 
   return (
     <footer className="shrink-0 border-t border-ink/20 px-4 py-1.5 geist-mono text-[10px] uppercase tracking-wide text-ink-muted">

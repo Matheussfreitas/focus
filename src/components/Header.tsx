@@ -116,7 +116,7 @@ export default function Header() {
   const navigate = useNavigate()
   const pathname = useRouterState({ select: (s) => s.location.pathname })
   const onDashboard = pathname.startsWith('/dashboard')
-  const onFocus = pathname === '/'
+  const onFocus = pathname === '/app'
 
   const today = new Date(
     new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }),
@@ -147,7 +147,7 @@ export default function Header() {
   // Escolher um layout fora da tela de foco leva de volta a ela.
   const handleLayoutChange = (id: LayoutId) => {
     setLayout(id)
-    if (!onFocus) void navigate({ to: '/' })
+    if (!onFocus) void navigate({ to: '/app' })
   }
 
   const preferencesMenu = (
@@ -163,7 +163,7 @@ export default function Header() {
   // O tour mostra elementos da tela de foco: fora dela, volta antes.
   const handleTour = async () => {
     if (!onFocus) {
-      await navigate({ to: '/' })
+      await navigate({ to: '/app' })
       setTimeout(() => void startTour({ loggedIn }), 400)
       return
     }
@@ -198,7 +198,7 @@ export default function Header() {
     >
       <nav className="h-full flex items-center gap-x-3">
         <div className="h-full min-w-0 flex items-center gap-1.5 sm:gap-2 mr-auto">
-          <Link to="/" className="font-bold text-ink">
+          <Link to="/app" className="font-bold text-ink">
             FOCUS
           </Link>
           <div className="hidden sm:block h-full w-0.5 bg-ink" />
@@ -246,7 +246,7 @@ export default function Header() {
                 </div>
 
                 <DropdownMenuItem asChild className={itemClass}>
-                  <Link to="/">
+                  <Link to="/app">
                     <FiTarget className="h-3 w-3" />
                     Foco
                     {onFocus && <ActiveMark />}

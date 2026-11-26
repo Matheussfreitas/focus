@@ -158,6 +158,7 @@ export function Pomodoro({
           </Button>
           <Button
             onClick={handleReset}
+            aria-label="Reiniciar"
             variant="default"
             className="w-14 py-6 @lg:w-20 @lg:py-8 cursor-pointer rounded-none text-cream/24 bg-ocean text-md border-3 border-cream/24 hover:text-cream"
           >
@@ -165,6 +166,7 @@ export function Pomodoro({
           </Button>
           <Button
             onClick={handleNextPhase}
+            aria-label="Próxima fase"
             variant="default"
             className="w-14 py-6 @lg:w-20 @lg:py-8 cursor-pointer rounded-none text-cream/24 bg-ocean text-md border-r-3 border-t-3 border-b-3 border-cream/24 hover:text-cream"
           >

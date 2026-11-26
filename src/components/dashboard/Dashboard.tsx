@@ -121,7 +121,7 @@ function EmptyState() {
         </p>
       </div>
       <Link
-        to="/"
+        to="/app"
         className="btn-primary geist-mono inline-flex items-center gap-2 px-5 py-3 text-xs uppercase tracking-widest"
       >
         Começar foco <FiArrowRight className="h-3.5 w-3.5" />
