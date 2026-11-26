@@ -1,4 +1,5 @@
 import { authClient } from '#/lib/auth-client.ts'
+import { PRIVACY_VERSION, TERMS_VERSION } from '#/lib/legal.ts'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { AtSign, Eye, EyeOff, Lock, ShieldCheck, User, X } from 'lucide-react'
 import { useState } from 'react'
@@ -105,6 +106,9 @@ export function Login() {
       name: data.name || '',
       email: data.email,
       password: data.password,
+      // versões aceitas no checkbox; o servidor grava data/hora do aceite
+      termsVersion: TERMS_VERSION,
+      privacyVersion: PRIVACY_VERSION,
     })
     reset()
   }
@@ -303,11 +307,21 @@ export function Login() {
                 className="text-[13px] leading-snug text-ink-soft cursor-pointer select-none"
               >
                 Concordo com os{' '}
-                <a href="#" className="font-semibold text-ink hover:underline">
+                <a
+                  href="/termos"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-semibold text-ink hover:underline"
+                >
                   Termos de Serviço
                 </a>{' '}
                 e com a{' '}
-                <a href="#" className="font-semibold text-ink hover:underline">
+                <a
+                  href="/privacidade"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-semibold text-ink hover:underline"
+                >
                   Política de Privacidade
                 </a>{' '}
                 da plataforma Focus.

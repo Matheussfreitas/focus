@@ -6,6 +6,7 @@ import {
   FiLogOut,
   FiSettings,
   FiTarget,
+  FiUser,
 } from 'react-icons/fi'
 import { authClient, useSession } from '#/lib/auth-client.ts'
 import { canRunTour, startTour } from '#/lib/tour.ts'
@@ -115,6 +116,7 @@ export default function Header() {
   const navigate = useNavigate()
   const pathname = useRouterState({ select: (s) => s.location.pathname })
   const onDashboard = pathname.startsWith('/dashboard')
+  const onFocus = pathname === '/'
 
   const today = new Date(
     new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }),
@@ -145,7 +147,7 @@ export default function Header() {
   // Escolher um layout fora da tela de foco leva de volta a ela.
   const handleLayoutChange = (id: LayoutId) => {
     setLayout(id)
-    if (onDashboard) void navigate({ to: '/' })
+    if (!onFocus) void navigate({ to: '/' })
   }
 
   const preferencesMenu = (
@@ -160,7 +162,7 @@ export default function Header() {
 
   // O tour mostra elementos da tela de foco: fora dela, volta antes.
   const handleTour = async () => {
-    if (onDashboard) {
+    if (!onFocus) {
       await navigate({ to: '/' })
       setTimeout(() => void startTour({ loggedIn }), 400)
       return
@@ -187,11 +189,11 @@ export default function Header() {
   )
 
   return (
-    // Na tela de foco o painel escuro logo abaixo já faz a divisa; no
-    // dashboard (fundo areia) a borda precisa ser explícita.
+    // Na tela de foco o painel escuro logo abaixo já faz a divisa; nas demais
+    // páginas (fundo areia) a borda precisa ser explícita.
     <header
       className={`top-0 z-50 bg-sand px-4 h-10 ${
-        onDashboard ? 'border-b-2 border-ink' : ''
+        onFocus ? '' : 'border-b-2 border-ink'
       }`}
     >
       <nav className="h-full flex items-center gap-x-3">
@@ -247,7 +249,7 @@ export default function Header() {
                   <Link to="/">
                     <FiTarget className="h-3 w-3" />
                     Foco
-                    {!onDashboard && <ActiveMark />}
+                    {onFocus && <ActiveMark />}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className={itemClass}>
@@ -255,6 +257,12 @@ export default function Header() {
                     <FiActivity className="h-3 w-3" />
                     Dashboard
                     {onDashboard && <ActiveMark />}
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild className={itemClass}>
+                  <Link to="/conta">
+                    <FiUser className="h-3 w-3" />
+                    Minha conta
                   </Link>
                 </DropdownMenuItem>
 

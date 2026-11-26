@@ -2,7 +2,8 @@ const ONE_YEAR = 60 * 60 * 24 * 365
 
 // Preferências ficam em cookie para o servidor já renderizar a página certa.
 export function setPreferenceCookie(name: string, value: string) {
-  document.cookie = `${name}=${encodeURIComponent(value)}; path=/; max-age=${ONE_YEAR}; samesite=lax`
+  const secure = location.protocol === 'https:' ? '; secure' : ''
+  document.cookie = `${name}=${encodeURIComponent(value)}; path=/; max-age=${ONE_YEAR}; samesite=lax${secure}`
 }
 
 export function hasCookie(name: string) {

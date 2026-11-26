@@ -5,6 +5,8 @@ import {
 } from '@tanstack/react-router'
 import Footer from '../components/Footer'
 import Header from '../components/Header'
+import { CookieNotice } from '../components/legal/CookieNotice'
+import { TermsGate } from '../components/legal/TermsGate'
 import { PomodoroProvider } from '../components/pomodoro/PomodoroProvider'
 import { PreferencesProvider } from '../lib/preferences'
 import { getPreferences } from '../server/preferences'
@@ -65,7 +67,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             <main className="flex-1 min-h-0">{children}</main>
           </PomodoroProvider>
         </PreferencesProvider>
-        {/* <Footer /> */}
+        <Footer />
+        <TermsGate />
+        <CookieNotice />
         <Scripts />
       </body>
     </html>

@@ -15,6 +15,10 @@ model User {
   image         String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  // Aceite dos Termos/Política (LGPD): quando e qual versão foi aceita.
+  termsAcceptedAt DateTime?
+  termsVersion    String?
+  privacyVersion  String?
   sessions      Session[]
   accounts      Account[]
   tasks         Task[]
@@ -59,6 +63,21 @@ model Account {
 
   @@index([userId])
   @@map("account")
+}
+
+// Registro de acesso (Marco Civil, art. 15): IP, data e hora, guardado por
+// 6 meses. Sem FK para o usuário: precisa sobreviver à exclusão da conta.
+model AccessLog {
+  id        String   @id @default(uuid())
+  userId    String
+  event     String
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([userId])
+  @@map("access_log")
 }
 
 model Verification {
